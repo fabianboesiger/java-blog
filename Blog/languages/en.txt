@@ -1,0 +1,29 @@
+Uptime
+Sessions
+Active Sessions
+Handles per Hour
+Visitors per Hour
+{{print get "active-sessions" variables}} users online!
+Error
+Page not found
+Internal server error
+Hello, World!
+Welcome at {{print get "title" variables}}.
+Projects
+Copy to Clipboard
+Copied to Clipboard
+Submit
+Username
+Email Address
+Password
+Repeat Password
+Sign up
+is already in use.
+is required.
+is too short.
+is too long.
+is too small.
+is too large.
+Sign in
+GitHub Profile
+Server Statistics

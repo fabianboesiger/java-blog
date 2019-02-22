@@ -1,0 +1,344 @@
+/* Predefined */
+
+:root{
+	--outside-color: #4E6E7D;
+	--main-color: #F5F1F2;
+	--outside-text-color: #CD9F64;
+	--main-text-color: #2C2C2C;
+	--error-color: #C94731;
+
+	--max-width: 1024px;
+	--max-form-width: 512px;
+
+	--heading-font: AbrilFatface, sans-serif;
+	--text-font: CrimsonText, serif;
+	--code-font: FiraCode, monospace;
+
+	--text-size: 18px;
+	--footer-text-size: 14px;
+
+	--padding: 48px;
+	--margin: 24px;
+}
+
+/* Fonts */
+
+@font-face{
+  font-family: CrimsonText;
+  src: url(fonts/CrimsonText/CrimsonText-Regular.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-weight: bold;
+  src: url(fonts/CrimsonText/CrimsonText-Bold.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-style: italic;
+  src: url(fonts/CrimsonText/CrimsonText-Italic.ttf);
+}
+@font-face{
+  font-family: CrimsonText;
+  font-weight: bold;
+   font-style: italic;
+  src: url(fonts/CrimsonText/CrimsonText-BoldItalic.ttf);
+}
+
+@font-face{
+  font-family: FiraCode;
+  src: url(fonts/FiraCode/FiraCode-Regular.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-weight: bold;
+  src: url(fonts/FiraCode/FiraCode-Bold.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-style: italic;
+  src: url(fonts/FiraCode/FiraCode-Italic.ttf);
+}
+@font-face{
+  font-family: FiraCode;
+  font-weight: bold;
+   font-style: italic;
+  src: url(fonts/FiraCode/FiraCode-BoldItalic.ttf);
+}
+
+@font-face{
+  font-family: AbrilFatface;
+  src: url(fonts/AbrilFatface/AbrilFatface-Regular.ttf);
+}
+
+/* Structure */
+
+html{
+	background-color: var(--outside-color);
+	font-size: var(--text-size);
+	font-family: var(--text-font);
+}
+
+body{
+	margin: 0px;
+}
+
+main{
+	padding-top: var(--padding);
+	padding-bottom: var(--padding);
+	background-color: var(--main-color);
+	color: var(--main-text-color);
+}
+
+header, footer{
+	color: var(--outside-text-color);
+}
+
+header{
+	text-align: center;
+}
+
+footer{
+	font-size: var(--footer-text-size);
+}
+
+main, header, footer{
+	box-sizing: border-box;
+	width: 100%;
+	padding-left: var(--padding);
+	padding-right: var(--padding);
+}
+
+.centered > *, .content > *, form > *{
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	margin-bottom: var(--margin);
+	margin-top: var(--margin);
+}
+
+/* General Element Styling */
+
+h1, h2{
+	font-family: var(--heading-font);
+	font-weight: normal;
+}
+
+h1{
+	font-size: 48px;
+}
+
+h2{
+	font-size: 32px;
+}
+
+ul{
+	padding-left: 20px;
+}
+
+a{
+	text-decoration: none;
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+	background-color: var(--outside-text-color);
+	color: var(--outside-color);
+	transition: all 0.2s;
+	outline: none;
+}
+
+main a{
+	padding-left: 0em;
+	padding-right: 0em;
+	background-color: transparent;
+	color: var(--main-text-color);
+	text-decoration: underline;
+	box-shadow: none;
+}
+
+a:hover{
+	background-color: transparent;
+	color: var(--outside-text-color);
+}
+
+main a:hover{
+	color: var(--outside-text-color);
+}
+
+img{
+	width: 100%;
+}
+
+#title{
+	display: inline-block;
+	padding: 0px;
+	background-color: transparent;
+	color: var(--outside-text-color);
+	transition: all 0.2s;
+}
+
+#title:hover{
+	transform: scale(1.02);
+}
+
+@keyframes scaling{
+	from{
+		transform: scale(1) rotateZ(-20deg);
+	}
+	to{
+		transform: scale(1.1) rotateZ(-20deg);
+	}
+}
+
+#active-users{
+	color: var(--main-text-color);
+	font-size: var(--footer-text-size);
+	position: absolute;
+	line-height: 1em;
+	top: 80px;
+	left: calc(50% + 55px);
+	width: 80px;
+	animation: scaling 0.7s ease 0s infinite alternate;
+}
+
+/* Tables */
+
+table{
+	width: 100%;
+	table-layout: fixed;
+	border-spacing: 0px;
+	font-family: var(--code-font);
+}
+
+th, td{
+	text-align: left;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	border-bottom: 2px solid var(--main-text-color);
+}
+
+/* Form and Button Styling */
+
+form{
+	margin: auto;
+	max-width: var(--max-form-width);
+}
+
+input{
+	width: 100%;
+	outline: none;
+	border: none;
+	color: var(--main-text-color);
+	font-size: var(--text-size);
+	font-family: var(--heading-font);
+	border-radius: 0px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	transition: all 0.2s;
+}
+
+input[type=text], input[type=password], input[type=email]{
+	padding: 0px;
+	padding-top: 8px;
+	padding-bottom: 2px;
+	border-bottom: 2px dotted var(--main-text-color);
+	background-color: transparent;
+}
+
+input[type=text]:hover, input[type=text]:focus, input[type=password]:hover, input[type=password]:focus, input[type=email]:hover, input[type=email]:focus{
+	border-bottom: 2px dotted var(--outside-text-color);
+}
+
+input[type=submit], .button{
+	box-sizing: border-box;
+	width: 100%;
+	padding: 8px;
+	text-align: center;
+	background-color: var(--main-text-color);
+	color: var(--main-color);
+	cursor: pointer;
+	text-decoration: none;
+	transform: translate(0, 4px);
+	box-shadow: 0px -4px var(--outside-color);
+}
+
+input[type=submit]:hover, .button:hover, input[type=submit]:focus, .button:focus{
+	background-color: var(--main-text-color);
+	color: var(--main-color);
+	transform: translate(0, 3px);
+	box-shadow: 0px -3px var(--outside-color);
+}
+
+input[type=submit]:active, input[type=submit].active, .button:active, .button.active{
+	background-color: var(--main-text-color);
+	color: var(--main-color);
+	transform: translate(0, 0px);
+	box-shadow: 0px -1px var(--outside-color);
+}
+
+.errors li{
+	color: var(--error-color);
+}
+
+.errors ul{
+	margin: 0px;
+}
+
+/* Navigation */
+
+nav{
+	background-color: var(--outside-color);
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0px;
+	display: flex;
+	justify-content: center;
+	align-self: flex-start;
+	flex-flow: row wrap;
+	z-index: 1000;
+}
+
+nav > a{
+	margin: 8px;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+/* Collapsibles */
+
+.collapsible{
+	cursor: pointer;
+	border-bottom: 2px dashed var(--main-text-color);
+}
+
+.collapsible::after{
+	content: " ▼";
+}
+
+.collapsible.active::after{
+	content: " ▲";
+}
+
+.content{
+	display: none;
+}
+
+/* Alignment */
+
+.flex{
+	display: flex;
+	justify-content: space-between;
+}
+
+.left{
+	text-align: left;
+}
+
+.right{
+	text-align: right;
+}
+
+.centered{
+	max-width: var(--max-width);
+	margin: auto;
+	box-sizing: border-box;
+}
