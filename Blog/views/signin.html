@@ -1,0 +1,15 @@
+{{include "top.html"}}
+	<form action="/signin" method="POST">
+		<h2>{{translate "signin"}}</h2>
+		<div class="block">
+			<label for="username">{{translate "username"}}</label>
+			<input type="text" name="username" id="username"/>
+		</div>
+		<div class="block">
+			<label for="password">{{translate "password"}}</label>
+			<input type="password" name="password" id="password"/>
+		</div>
+		<input type="submit" value="{{translate "submit"}}"/>
+		{{include "messages.html"}}
+	</form>
+{{include "bottom.html"}}

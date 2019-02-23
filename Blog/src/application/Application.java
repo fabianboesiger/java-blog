@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import database.Database;
+import database.DatabaseException;
 import database.templates.Errors;
 import server.Request;
 import server.Responder;
@@ -20,10 +21,10 @@ public class Application {
 	private HashMap <String, Object> predefined = new HashMap <String, Object>();
 
 	
-	public Application() throws IOException {		
+	public Application() throws IOException, DatabaseException {		
 		database = new Database();
 		responder = new Responder(predefined);
-		server = new Server(database, responder);
+		server = new Server(responder);
 		setup();
 		
 	}
@@ -32,11 +33,7 @@ public class Application {
 		
 		predefined.put("title", "Fälis Blog");
 
-		server.on("GET", ".*", (Request request) -> {
-			predefined.put("active-sessions", "" + server.activeCount());
-			return responder.next();
-		});
-		server.on("POST", ".*", (Request request) -> {
+		server.on("ALL", ".*", (Request request) -> {
 			predefined.put("active-sessions", "" + server.activeCount());
 			return responder.next();
 		});
@@ -81,17 +78,14 @@ public class Application {
 			user.setFromStringMap(request.parameters);
 			Errors errors = new Errors();
 			if(user.validate(errors)) {
-				if(database.save(user)) {
+				//if(database.save(user)) {
 					return responder.text("success");
-				}
+				//} else {
+					//errors.add("username", "in-use");
+				//}
 			}
-			errors.add("username", "in-use");
 			request.session.addFlash("errors", errors);
 			return responder.redirect("/signup");
-		});
-		
-		server.on("GET", "/signup", (Request request) -> {
-			return responder.text(request.session.getFlash("errors").toString());
 		});
 		
 	}
