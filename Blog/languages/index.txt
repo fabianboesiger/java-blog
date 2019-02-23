@@ -24,6 +24,7 @@ minimum-length-exceeded
 maximum-length-exceeded
 minimum-exceeded
 maximum-exceeded
+invalid-characters
 signin
 github-profile
 server-stats

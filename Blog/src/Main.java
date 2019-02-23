@@ -1,11 +1,10 @@
 import java.io.IOException;
 
 import application.Application;
-import database.DatabaseException;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException, DatabaseException {
+	public static void main(String[] args) throws IOException {
 		
 		// Create new application
 		new Application();

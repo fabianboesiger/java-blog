@@ -18,12 +18,13 @@ E-Mail Adresse
 Passwort
 Passwort wiederholen
 Registrieren
-bereits in Verwendung.
-wird benötigt.
-ist zu kurz.
-ist zu lang.
-ist zu klein.
-ist zu gross.
+bereits in Verwendung
+wird benötigt
+ist zu kurz
+ist zu lang
+ist zu klein
+ist zu gross
+enthält ungültige Zeichen
 Anmelden
 GitHub-Profil
 Server-Statistiken

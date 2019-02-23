@@ -18,12 +18,13 @@ Email Address
 Password
 Repeat Password
 Sign up
-is already in use.
-is required.
-is too short.
-is too long.
-is too small.
-is too large.
+is already in use
+is required
+is too short
+is too long
+is too small
+is too large
+contains invalid characters
 Sign in
 GitHub Profile
 Server Statistics

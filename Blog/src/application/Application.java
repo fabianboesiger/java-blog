@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import database.Database;
-import database.DatabaseException;
 import database.templates.Errors;
 import server.Request;
 import server.Responder;
@@ -21,7 +20,7 @@ public class Application {
 	private HashMap <String, Object> predefined = new HashMap <String, Object>();
 
 	
-	public Application() throws IOException, DatabaseException {		
+	public Application() throws IOException {		
 		database = new Database();
 		responder = new Responder(predefined);
 		server = new Server(responder);
@@ -75,14 +74,14 @@ public class Application {
 		
 		server.on("POST", "/signup", (Request request) -> {
 			User user = new User();
-			user.setFromStringMap(request.parameters);
+			user.parse(request.parameters);
 			Errors errors = new Errors();
 			if(user.validate(errors)) {
-				//if(database.save(user)) {
+				if(database.save(user, false)) {
 					return responder.text("success");
-				//} else {
-					//errors.add("username", "in-use");
-				//}
+				} else {
+					errors.add("username", "in-use");
+				}
 			}
 			request.session.addFlash("errors", errors);
 			return responder.redirect("/signup");
