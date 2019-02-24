@@ -1,3 +1,0 @@
-username="FA3LI"
-password="hunter2"
-email="boesiger.fabian@outlook.com"
