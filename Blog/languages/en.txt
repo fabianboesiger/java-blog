@@ -7,7 +7,7 @@ Visitors per Hour
 Error
 Page not found
 Internal server error
-Hello, World!
+Hello
 Welcome at {{print get "title" variables}}.
 Projects
 Copy to Clipboard
@@ -25,6 +25,14 @@ is too long
 is too small
 is too large
 contains invalid characters
+does not exist
+does not match
+Passwords do not match
 Sign in
+Sign out
 GitHub Profile
 Server Statistics
+User
+World
+You dont have an Account? Sign up <a href="/signup">here</a>.
+You already have an Account? Sign in <a href="/signin">here</a>.

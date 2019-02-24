@@ -7,7 +7,7 @@ Besucher pro Stunde
 Fehler
 Seite nicht gefunden
 Interner Server-Fehler
-Hallo, Welt!
+Hallo
 Willkommen bei {{print get "title" variables}}.
 Projekte
 In die Zwischenablage kopieren
@@ -25,6 +25,14 @@ ist zu lang
 ist zu klein
 ist zu gross
 enthält ungültige Zeichen
+existiert nicht
+stimmt nicht überein
+Passwörter stimmen nicht überein
 Anmelden
+Abmelden
 GitHub-Profil
 Server-Statistiken
+Benutzer
+Welt
+Du hast noch keinen Account? Registriere dich <a href="/signup">hier</a>.
+Du hast bereits einen Account? Melde dich <a href="/signin">hier</a> an.

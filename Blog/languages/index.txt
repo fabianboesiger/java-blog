@@ -25,6 +25,14 @@ maximum-length-exceeded
 minimum-exceeded
 maximum-exceeded
 invalid-characters
+does-not-exist
+does-not-match
+passwords-do-not-match
 signin
+signout
 github-profile
 server-stats
+user
+world
+signup-here
+signin-here

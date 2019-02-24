@@ -1,5 +1,15 @@
 <nav>
-	<a href="/projects">{{translate "projects"}}</a>
-	<a href="/signup">{{translate "signup"}}</a>
-	<a href="/signin">{{translate "signin"}}</a>
+	<a href="/projects">{{print translate "projects"}}</a>
+	{{
+		if equals get "username" variables null
+			print "<a href=\"/signin\">"
+			print translate "signin"
+			print "</a>"
+		end
+		if not equals get "username" variables null
+			print "<a href=\"/signout\">"
+			print translate "signout"
+			print "</a>"
+		end
+	}}
 </nav>

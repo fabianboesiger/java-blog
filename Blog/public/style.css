@@ -108,7 +108,7 @@ main, header, footer{
 	padding-right: var(--padding);
 }
 
-.centered > *, .content > *, form > *{
+.centered > *:not(script), .content > *, form > *{
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -199,6 +199,12 @@ img{
 	animation: scaling 0.7s ease 0s infinite alternate;
 }
 
+pre{
+	border-left: 4px solid var(--error-color);
+	padding-left: 16px;
+	overflow-x: auto;
+}
+
 /* Tables */
 
 table{
@@ -208,11 +214,15 @@ table{
 	font-family: var(--code-font);
 }
 
+tr:not(:last-child) > *{
+	border-bottom: 2px solid var(--main-text-color);
+}
+
 th, td{
 	text-align: left;
 	padding-left: 0.2em;
 	padding-right: 0.2em;
-	border-bottom: 2px solid var(--main-text-color);
+	overflow-wrap: break-word;
 }
 
 /* Form and Button Styling */
@@ -318,13 +328,13 @@ nav > a{
 	content: " ▲";
 }
 
-.content{
+div .content{
 	display: none;
 }
 
 /* Alignment */
 
-.flex{
+div .flex{
 	display: flex;
 	justify-content: space-between;
 }
