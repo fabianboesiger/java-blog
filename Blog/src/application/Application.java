@@ -80,7 +80,7 @@ public class Application {
 			if(user.validate(errors)) {
 				if(database.save(user, false)) {
 					request.session.login(user.getUsername());
-					return responder.redirect("success");
+					return responder.redirect("/");
 				} else {
 					errors.add("username", "in-use");
 				}
