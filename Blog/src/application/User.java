@@ -19,10 +19,16 @@ public class User extends ObjectTemplate {
 	}
 	
 	public boolean authenticate(String password) {
-		if(password.equals(this.password.get())) {
-			return true;
+		if(password != null) {
+			if(password.equals(this.password.get())) {
+				return true;
+			}
 		}
 		return false;
+	}
+
+	public String getUsername() {
+		return (String) username.get();
 	}
 
 }
