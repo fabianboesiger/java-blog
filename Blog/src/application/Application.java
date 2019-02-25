@@ -56,8 +56,8 @@ public class Application {
 			variables.put("uptime", String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60));
 			variables.put("sessions", "" + server.sessionsCount());
 			variables.put("active-sessions", "" + server.activeCount());
-			variables.put("handles-per-day", "" + String.format("%.2f", server.handlesPerDay()));
-			variables.put("visitors-per-day", "" + String.format("%.2f", server.visitorsPerDay()));
+			variables.put("handles-per-day", "" + Math.round(server.handlesPerDay()));
+			variables.put("visitors-per-day", "" + Math.round(server.visitorsPerDay()));
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
