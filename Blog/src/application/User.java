@@ -12,7 +12,9 @@ public class User extends ObjectTemplate {
 	
 	public User() {
 		super("user");
-		username = new IdentifiableStringTemplate("username", 2, 16);
+		username = new IdentifiableStringTemplate("username", 2, 16, (Object value) -> {
+			return hash((String) value);
+		});
 		password = new StringTemplate("password", 4, 32);
 		email = new StringTemplate("email", 0, 64);
 		setIdentifier(username);
@@ -20,7 +22,7 @@ public class User extends ObjectTemplate {
 	
 	public boolean authenticate(String password) {
 		if(password != null) {
-			if(password.equals(this.password.get())) {
+			if(hash(password).equals(this.password.get())) {
 				return true;
 			}
 		}
@@ -29,6 +31,10 @@ public class User extends ObjectTemplate {
 
 	public String getUsername() {
 		return (String) username.get();
+	}
+	
+	private static String hash(String input) {
+		return input;
 	}
 
 }
