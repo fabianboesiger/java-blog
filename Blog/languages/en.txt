@@ -1,8 +1,8 @@
 Uptime
 Sessions
 Active Sessions
-Handles per Hour
-Visitors per Hour
+Handles per Day
+Visitors per Day
 {{print get "active-sessions" variables}} users online!
 Error
 Page not found

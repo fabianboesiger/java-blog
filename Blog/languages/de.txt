@@ -1,8 +1,8 @@
 Betriebszeit
 Sitzungen
 Aktive Sitzungen
-Verarbeitungen pro Stunde
-Besucher pro Stunde
+Verarbeitungen pro Tag
+Besucher pro Tag
 {{print get "active-sessions" variables}} Benutzer online!
 Fehler
 Seite nicht gefunden
