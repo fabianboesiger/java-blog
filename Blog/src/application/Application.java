@@ -78,7 +78,7 @@ public class Application {
 			user.parse(request.parameters);
 			Errors errors = new Errors();
 			if(user.validate(errors)) {
-				if(database.save(user, false)) {
+				if(database.save(user) != null) {
 					request.session.login(user.getUsername());
 					return responder.redirect("/");
 				} else {
