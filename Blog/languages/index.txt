@@ -2,7 +2,6 @@ uptime
 sessions
 active-sessions
 handles-per-day
-visitors-per-day
 active-users
 error
 not-found

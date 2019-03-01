@@ -30,7 +30,7 @@ public class Application {
 	
 	public void setup() throws IOException {
 		
-		predefined.put("title", "Fälis Blog");
+		predefined.put("title", "FÃ¤lis Blog");
 
 		server.on("ALL", ".*", (Request request) -> {
 			predefined.put("active-sessions", "" + server.activeCount());
@@ -57,7 +57,6 @@ public class Application {
 			variables.put("sessions", "" + server.sessionsCount());
 			variables.put("active-sessions", "" + server.activeCount());
 			variables.put("handles-per-day", "" + Math.round(server.handlesPerDay()));
-			variables.put("visitors-per-day", "" + Math.round(server.visitorsPerDay()));
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
