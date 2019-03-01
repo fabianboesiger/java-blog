@@ -5,13 +5,12 @@ import database.templates.ObjectTemplate;
 import database.templates.StringTemplate;
 
 public class User extends ObjectTemplate {
-	
+		
 	private IdentifiableStringTemplate username;
 	private StringTemplate password;
 	private StringTemplate email;
 	
 	public User() {
-		super("user");
 		username = new IdentifiableStringTemplate("username", 2, 16, (Object value) -> {
 			return hash((String) value);
 		});
