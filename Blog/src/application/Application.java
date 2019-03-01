@@ -23,7 +23,7 @@ public class Application {
 	public Application() throws IOException {		
 		database = new Database();
 		responder = new Responder(predefined);
-		server = new Server(responder);
+		server = new Server(responder, 8000);
 		setup();
 		
 	}
