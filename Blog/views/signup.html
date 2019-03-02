@@ -3,6 +3,7 @@
 		window.addEventListener("load", function() {
 			let password = document.getElementById("password");
 			let repeatPassword = document.getElementById("repeat-password");
+			let submit = document.getElementById("submit-signup");
 			
 			password.addEventListener("keyup", check);
 			repeatPassword.addEventListener("keyup", check);
@@ -20,6 +21,9 @@
 						error.classList.add("passwords-do-not-match");
 						error.innerHTML = "{{print translate "passwords-do-not-match"}}";
 						document.getElementsByTagName("form")[0].appendChild(errors);
+						submit.disabled = true;
+					} else {
+						submit.disabled = false;
 					}
 				} else {
 					let error = document.getElementsByClassName("passwords-do-not-match")[0];
@@ -29,6 +33,7 @@
 							error.classList.add("passwords-do-not-match");
 							error.innerHTML = "{{print translate "passwords-do-not-match"}}";
 							errors.appendChild(error);
+							submit.disabled = true;
 						}
 					} else {
 						if(error !== undefined) {
@@ -37,6 +42,7 @@
 						if(errors.children.length === 0) {
 							errors.parentElement.removeChild(errors);
 						}
+						submit.disabled = false;
 					}
 				}
 			}
@@ -61,7 +67,7 @@
 			<label for="repeat-password">{{print translate "repeat-password"}}</label>
 			<input type="password" name="repeat-password" id="repeat-password"  minlength="4" maxlength="32"/>
 		</div>
-		<input type="submit" value="{{print translate "submit"}}"/>
+		<input type="submit" value="{{print translate "submit"}}" id="submit-signup"/>
 		{{include "messages.html"}}
 	</form>
 {{include "bottom.html"}}
