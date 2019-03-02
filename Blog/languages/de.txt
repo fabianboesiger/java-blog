@@ -8,7 +8,7 @@ Seite nicht gefunden
 Interner Server-Fehler
 Hallo
 Willkommen bei {{print get "title" variables}}.
-Projekte
+Artikel
 In die Zwischenablage kopieren
 In die Zwischenablage kopiert
 Senden
@@ -23,6 +23,8 @@ ist zu kurz
 ist zu lang
 ist zu klein
 ist zu gross
+enthält zu wenige Elemente
+enthält zu viele Elemente
 enthält ungültige Zeichen
 existiert nicht
 stimmt nicht überein

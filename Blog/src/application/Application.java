@@ -30,7 +30,7 @@ public class Application {
 	
 	public void setup() throws IOException {
 		
-		predefined.put("title", "FÃ¤lis Blog");
+		predefined.put("title", "Fälis Blog");
 
 		server.on("ALL", ".*", (Request request) -> {
 			predefined.put("active-sessions", "" + server.activeCount());
@@ -42,7 +42,7 @@ public class Application {
 			return responder.render("index.html", request.languages);
 		});
 		
-		server.on("GET", "/projects", (Request request) -> {
+		server.on("GET", "/articles", (Request request) -> {
 			return responder.render("projects.html", request.languages);
 		});
 		
@@ -74,11 +74,12 @@ public class Application {
 		
 		server.on("POST", "/signup", (Request request) -> {
 			User user = new User();
-			user.parse(request.parameters);
+			user.parseFromMap(request.parameters);
 			Errors errors = new Errors();
 			if(user.validate(errors)) {
-				if(database.save(user) != null) {
+				if(database.save(user)) {
 					request.session.login(user.getUsername());
+					user.sendMail("Welcome", "Erfolgreich registriert");
 					return responder.redirect("/");
 				} else {
 					errors.add("username", "in-use");

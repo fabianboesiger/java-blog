@@ -8,7 +8,7 @@ not-found
 internal-server-error
 hello
 introduction
-projects
+articles
 copy
 copied
 submit
@@ -23,6 +23,8 @@ minimum-length-exceeded
 maximum-length-exceeded
 minimum-exceeded
 maximum-exceeded
+minimum-elements-exceeded
+maximum-elements-exceeded
 invalid-characters
 does-not-exist
 does-not-match

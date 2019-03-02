@@ -8,7 +8,7 @@ Page not found
 Internal server error
 Hello
 Welcome at {{print get "title" variables}}.
-Projects
+Articles
 Copy to Clipboard
 Copied to Clipboard
 Submit
@@ -23,6 +23,8 @@ is too short
 is too long
 is too small
 is too large
+contains too few elements
+contains too many elements
 contains invalid characters
 does not exist
 does not match
