@@ -145,10 +145,6 @@ a{
 	outline: none;
 }
 
-a.active{
-	transition: none;
-}
-
 main a{
 	padding-left: 0em;
 	padding-right: 0em;
@@ -158,12 +154,12 @@ main a{
 	box-shadow: none;
 }
 
-a:hover{
+a:hover, a:focus{
 	background-color: transparent;
 	color: var(--outside-text-color);
 }
 
-main a:hover{
+main a:hover, main a:focus{
 	color: var(--main-text-color);
 }
 
@@ -179,7 +175,7 @@ img{
 	transition: all 0.2s;
 }
 
-#title:hover{
+#title:hover, #title:focus{
 	transform: scale(1.02);
 }
 
