@@ -1,0 +1,10 @@
+{{include "top.html"}}
+<h2>{{print translate "error"}} {{print get "code" variables}}</h2>
+<h3>{{print translate get "message" variables}}</h3>
+{{
+    if exists "error" variables
+        print "<pre>"
+        print get "error" variables
+    end
+}}
+{{include "bottom.html"}}

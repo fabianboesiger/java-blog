@@ -1,0 +1,16 @@
+<h1>
+	{{
+		if equals get "username" variables null
+			print translate "hello"
+			print ", "
+			print translate "world"
+			print "!"
+		end
+		if not equals get "username" variables null
+			print translate "hello"
+			print ", "
+			print get "username" variables
+			print "!"
+		end
+	}}
+</h1>

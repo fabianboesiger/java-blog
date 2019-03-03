@@ -145,6 +145,10 @@ a{
 	outline: none;
 }
 
+a.active{
+	transition: none;
+}
+
 main a{
 	padding-left: 0em;
 	padding-right: 0em;
@@ -160,7 +164,7 @@ a:hover{
 }
 
 main a:hover{
-	color: var(--outside-text-color);
+	color: var(--main-text-color);
 }
 
 img{
@@ -311,6 +315,13 @@ nav > a{
 	margin: 8px;
 	margin-top: 16px;
 	margin-bottom: 16px;
+}
+
+nav > a.active{
+	transform: translateY(16px);
+	background-color: var(--main-color);
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 }
 
 /* Collapsibles */

@@ -38,6 +38,15 @@ window.addEventListener("load", function() {
 		}, 1000);
 	}
 
+	// Set Navigation
+	let buttons = document.getElementsByTagName("nav")[0].getElementsByTagName("a");
+	for(let i = 0; i < buttons.length; i++) {
+		let button = buttons[i];
+		if(button.href === window.location.href) {
+			button.classList.add("active");
+		}
+	}
+
 });
 
 // Loader

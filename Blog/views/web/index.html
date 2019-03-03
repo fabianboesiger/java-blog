@@ -1,0 +1,20 @@
+{{include "top.html"}}
+	<h2>
+		{{
+			if equals get "username" variables null
+				print translate "hello"
+				print ", "
+				print translate "world"
+				print "!"
+			end
+			if not equals get "username" variables null
+				print translate "hello"
+				print ", "
+				print get "username" variables
+				print "!"
+			end
+		}}
+	</h2>
+	<p>{{print translate "introduction"}}</p>
+	<a class="button" href="/signup">{{print translate "signup"}}</a>
+{{include "bottom.html"}}
