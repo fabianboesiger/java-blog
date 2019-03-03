@@ -1,0 +1,12 @@
+{{include "top.html"}}
+	<form action="/email" method="POST">
+        <h2>{{print translate "change-email"}}</h2>
+        {{include "messages.html"}}
+		<div>
+			<label for="email">{{print translate "email"}}</label>
+			<input type="email" name="email" id="email" maxlength="64"/>
+		</div>
+        <input type="submit" value="{{print translate "submit"}}" id="submit-signup"/>
+        <a class="button" href="/profile">{{print translate "back"}}</a>
+    </form>
+{{include "bottom.html"}}

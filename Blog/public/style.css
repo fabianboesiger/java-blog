@@ -200,9 +200,8 @@ img{
 }
 
 pre{
-	border-left: 4px solid var(--error-color);
-	padding-left: 16px;
 	overflow-x: auto;
+	font-family: var(--code-font);
 }
 
 /* Tables */
@@ -238,7 +237,7 @@ input{
 	border: none;
 	color: var(--main-text-color);
 	font-size: var(--text-size);
-	font-family: var(--heading-font);
+	font-family: var(--text-font);
 	border-radius: 0px;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -313,11 +312,13 @@ nav > a{
 	margin-bottom: 16px;
 }
 
-nav > a.active{
+nav > a.active, nav > a.active:hover, nav > a.active:focus{
+	transition: none;
 	transform: translateY(16px);
 	background-color: var(--main-color);
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
+	color: var(--outside-color);
 }
 
 /* Collapsibles */

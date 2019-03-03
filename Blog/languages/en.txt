@@ -38,3 +38,8 @@ World
 You dont have an Account? Sign up <a href="/signup">here</a>.
 You already have an Account? Sign in <a href="/signin">here</a>.
 Profile
+Change Email
+Back
+Change Password
+You forgot your password? Recover your account <a href="/recover">here</a>.
+You are currently signed in as {{print get "username" variables}}.

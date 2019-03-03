@@ -38,3 +38,8 @@ world
 signup-here
 signin-here
 profile
+change-email
+back
+change-password
+forgot-password
+signed-in-as

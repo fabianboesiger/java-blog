@@ -1,16 +1,16 @@
 {{include "top.html"}}
 	<form action="/signin" method="POST">
 		<h2>{{print translate "signin"}}</h2>
-		<em>{{print translate "signup-here"}}</em>
-		<div class="block">
+		{{include "messages.html"}}
+		<div>
 			<label for="username">{{print translate "username"}}</label>
 			<input type="text" name="username" id="username"/>
 		</div>
-		<div class="block">
+		<div>
 			<label for="password">{{print translate "password"}}</label>
 			<input type="password" name="password" id="password"/>
 		</div>
 		<input type="submit" value="{{print translate "submit"}}"/>
-		{{include "messages.html"}}
+		<em>{{print translate "signup-here"}}<br/>{{print translate "forgot-password"}}</em>
 	</form>
 {{include "bottom.html"}}

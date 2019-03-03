@@ -65,11 +65,20 @@ public class Application {
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
-		server.on("GET", "/profile", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			variables.put("uptime", "df");
-			
-			return responder.render("profile.html", request.languages, variables);
+		server.on("GET", "/profile", (Request request) -> {			
+			return responder.render("profile.html", request.languages);
+		});
+		
+		server.on("GET", "/profile/email", (Request request) -> {
+			return responder.render("email.html", request.languages);
+		});
+		
+		server.on("GET", "/profile/password", (Request request) -> {
+			return responder.render("password.html", request.languages);
+		});
+		
+		server.on("GET", "/profile/delete", (Request request) -> {
+			return responder.render("delete.html", request.languages);
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
