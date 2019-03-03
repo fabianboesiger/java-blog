@@ -7,6 +7,7 @@ import java.util.Map;
 
 import database.Database;
 import database.templates.Errors;
+import mailer.Mailer;
 import server.Request;
 import server.Responder;
 import server.Server;
@@ -15,6 +16,7 @@ public class Application {
 	
 	private Database database;
 	private Responder responder;
+	private Mailer mailer;
 	private Server server;
 	
 	private HashMap <String, Object> predefined = new HashMap <String, Object>();
@@ -23,6 +25,7 @@ public class Application {
 	public Application() throws IOException {		
 		database = new Database();
 		responder = new Responder(predefined);
+		mailer = new Mailer(predefined);
 		server = new Server(responder, 8000);
 		setup();
 		
@@ -52,39 +55,57 @@ public class Application {
 		
 		server.on("GET", "/stats", (Request request) -> {
 			long uptimeMillis = server.uptime();
+			
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			variables.put("uptime", String.format("%02d", uptimeMillis/1000/60/60) + ":" + String.format("%02d", uptimeMillis/1000/60%60) + ":" + String.format("%02d", uptimeMillis/1000%60));
 			variables.put("sessions", "" + server.sessionsCount());
 			variables.put("active-sessions", "" + server.activeCount());
 			variables.put("handles-per-day", "" + Math.round(server.handlesPerDay()));
+			
 			return responder.render("stats.html", request.languages, variables);
+		});
+		
+		server.on("GET", "/profile", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			variables.put("uptime", "df");
+			
+			return responder.render("profile.html", request.languages, variables);
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			Errors errors = (Errors) request.session.getFlash("errors");
+			
 			if(errors != null) {
 				List <Map <String, String>> list = errors.get();
 				if(list.size() > 0) {
 					variables.put("errors", list);
 				}
 			}
+			
 			return responder.render("signup.html", request.languages, variables);
 		});
 		
 		server.on("POST", "/signup", (Request request) -> {
 			User user = new User();
 			user.parseFromMap(request.parameters);
+			
 			Errors errors = new Errors();
+			
 			if(user.validate(errors)) {
 				if(database.save(user)) {
 					request.session.login(user.getUsername());
-					user.sendMail("Welcome", "Erfolgreich registriert");
+					
+					HashMap <String, Object> variables = new HashMap <String, Object> ();
+					variables.put("username", user.getUsername());
+					mailer.send(user.getMail(), "{{print translate \"signup\"}}", "signup.html", request.languages, variables);
+					
 					return responder.redirect("/");
 				} else {
 					errors.add("username", "in-use");
 				}
 			}
+			
 			request.session.addFlash("errors", errors);
 			return responder.redirect("/signup");
 		});
@@ -92,18 +113,21 @@ public class Application {
 		server.on("GET", "/signin", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			Errors errors = (Errors) request.session.getFlash("errors");
+			
 			if(errors != null) {
 				List <Map <String, String>> list = errors.get();
 				if(list.size() > 0) {
 					variables.put("errors", list);
 				}
 			}
+			
 			return responder.render("signin.html", request.languages, variables);
 		});
 		
 		server.on("POST", "/signin", (Request request) -> {
 			User user = new User();
 			Errors errors = new Errors();
+			
 			if(database.load(user, request.parameters.get("username"))) {
 				if(user.authenticate(request.parameters.get("password"))) {
 					request.session.login(user.getUsername());
@@ -114,6 +138,7 @@ public class Application {
 			} else {
 				errors.add("user", "does-not-exist");
 			}
+			
 			request.session.addFlash("errors", errors);
 			return responder.redirect("/signin");
 		});
