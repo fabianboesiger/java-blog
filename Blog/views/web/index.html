@@ -15,12 +15,21 @@
 			end
 		}}
 	</h2>
-	<p>{{print translate "introduction"}}</p>
 	{{
 		if equals get "username" variables null
-			print "<a class=\"button\" href=\"/signup\">"
-			print translate "signup"
+			print "<p>"
+			print translate "welcome"
+			print " "
+			print translate "introduction"
+			print "</p>"
+			print "<a id=\"register\" class=\"button\" href=\"/signup\">"
+			print translate "signup-now"
 			print "</a>"
+		end
+		if not equals get "username" variables null
+			print "<p>"
+			print translate "welcome"
+			print "</p>"
 		end
 	}}
 {{include "bottom.html"}}

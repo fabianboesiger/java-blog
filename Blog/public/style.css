@@ -179,7 +179,7 @@ img{
 	transform: scale(1.02);
 }
 
-@keyframes scaling{
+@keyframes active-users{
 	from{
 		transform: scale(1) rotateZ(-20deg);
 	}
@@ -196,7 +196,11 @@ img{
 	top: 80px;
 	left: calc(50% + 55px);
 	width: 80px;
-	animation: scaling 0.7s ease 0s infinite alternate;
+	animation: active-users 0.7s ease 0s infinite alternate;
+}
+
+#register{
+	text-transform: uppercase;
 }
 
 pre{
