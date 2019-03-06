@@ -29,6 +29,7 @@ contains invalid characters
 does not exist
 does not match
 Passwords do not match
+can't be deleted
 Sign in
 Sign out
 GitHub Profile
@@ -43,3 +44,5 @@ Back
 Change Password
 You forgot your password? Recover your account <a href="/recover">here</a>.
 You are currently signed in as {{print get "username" variables}}.
+Sign up now
+You are new here? Sign up now to gain access to extra features.

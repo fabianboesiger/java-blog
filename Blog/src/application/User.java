@@ -45,7 +45,10 @@ public class User extends ObjectTemplate {
 	}
 	
 	public static String hash (String input) throws NoSuchAlgorithmException {
-		MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+		if(input == null) {
+			return null;
+		}
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
 		messageDigest.update(input.getBytes());
 		byte[] bytes = messageDigest.digest();
 		StringBuilder stringBuilder = new StringBuilder();

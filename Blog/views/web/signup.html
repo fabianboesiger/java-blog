@@ -2,7 +2,7 @@
 	{{include "password-checker.html"}}
 	<form action="/signup" method="POST">
 		<h2>{{print translate "signup"}}</h2>
-		{{include "messages.html"}}
+		<em>{{print translate "signin-here"}}</em>
 		<div>
 			<label for="username">{{print translate "username"}}</label>
 			<input type="text" name="username" id="username" minlength="2" maxlength="16"/>
@@ -20,6 +20,6 @@
 			<input type="password" name="repeat-password" id="repeat-password"  minlength="4" maxlength="32"/>
 		</div>
 		<input type="submit" value="{{print translate "submit"}}" id="submit-signup"/>
-		<em>{{print translate "signin-here"}}</em>
+		{{include "messages.html"}}
 	</form>
 {{include "bottom.html"}}

@@ -2,11 +2,9 @@ package application;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import database.Database;
-import database.templates.Errors;
+import database.Messages;
 import mailer.Mailer;
 import server.Request;
 import server.Responder;
@@ -28,7 +26,6 @@ public class Application {
 		mailer = new Mailer(predefined);
 		server = new Server(responder, 8000);
 		setup();
-		
 	}
 	
 	public void setup() throws IOException {
@@ -65,6 +62,14 @@ public class Application {
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
+		server.on("ALL", "/profile.*", (Request request) -> {
+			if(request.session.getUsername() == null) {
+				return responder.redirect("/signin");
+			} else {
+				return responder.next();
+			}
+		});
+		
 		server.on("GET", "/profile", (Request request) -> {			
 			return responder.render("profile.html", request.languages);
 		});
@@ -78,20 +83,36 @@ public class Application {
 		});
 		
 		server.on("GET", "/profile/delete", (Request request) -> {
-			return responder.render("delete.html", request.languages);
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("delete.html", request.languages, variables);
+		});
+		
+		server.on("GET", "/profile/delete/confirm", (Request request) -> {
+			if(database.delete(User.class, request.session.getUsername())) {
+				request.session.logout();
+				return responder.redirect("/");
+			} else {
+				Messages messages = new Messages();
+				messages.add("user", "deletion-error");
+				request.session.addFlash("errors", messages);
+				return responder.redirect("/profile/delete");
+			}
+			
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Errors errors = (Errors) request.session.getFlash("errors");
 			
-			if(errors != null) {
-				List <Map <String, String>> list = errors.get();
-				if(list.size() > 0) {
-					variables.put("errors", list);
-				}
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
 			}
-			
+
 			return responder.render("signup.html", request.languages, variables);
 		});
 		
@@ -99,9 +120,9 @@ public class Application {
 			User user = new User();
 			user.parseFromMap(request.parameters);
 			
-			Errors errors = new Errors();
+			Messages messages = new Messages();
 			
-			if(user.validate(errors)) {
+			if(user.validate(messages)) {
 				if(database.save(user)) {
 					request.session.login(user.getUsername());
 					
@@ -111,44 +132,41 @@ public class Application {
 					
 					return responder.redirect("/");
 				} else {
-					errors.add("username", "in-use");
+					messages.add("username", "in-use");
 				}
 			}
 			
-			request.session.addFlash("errors", errors);
+			request.session.addFlash("errors", messages);
 			return responder.redirect("/signup");
 		});
 		
 		server.on("GET", "/signin", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Errors errors = (Errors) request.session.getFlash("errors");
-			
-			if(errors != null) {
-				List <Map <String, String>> list = errors.get();
-				if(list.size() > 0) {
-					variables.put("errors", list);
-				}
+
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
 			}
 			
 			return responder.render("signin.html", request.languages, variables);
 		});
 		
 		server.on("POST", "/signin", (Request request) -> {
-			User user = new User();
-			Errors errors = new Errors();
+			Messages messages = new Messages();
+			User user = null;
 			
-			if(database.load(user, request.parameters.get("username"))) {
+			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
 				if(user.authenticate(request.parameters.get("password"))) {
 					request.session.login(user.getUsername());
 					return responder.redirect("/");
 				} else {
-					errors.add("password", "does-not-match");
+					messages.add("password", "does-not-match");
 				}
 			} else {
-				errors.add("user", "does-not-exist");
+				messages.add("user", "does-not-exist");
 			}
 			
-			request.session.addFlash("errors", errors);
+			request.session.addFlash("errors", messages);
 			return responder.redirect("/signin");
 		});
 		

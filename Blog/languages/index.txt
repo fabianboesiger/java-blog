@@ -7,7 +7,7 @@ error
 not-found
 internal-server-error
 hello
-introduction
+welcome
 articles
 copy
 copied
@@ -29,6 +29,7 @@ invalid-characters
 does-not-exist
 does-not-match
 passwords-do-not-match
+deletion-error
 signin
 signout
 github-profile
@@ -43,3 +44,5 @@ back
 change-password
 forgot-password
 signed-in-as
+signup-now
+introduction

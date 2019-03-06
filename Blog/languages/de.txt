@@ -29,6 +29,7 @@ enthält ungültige Zeichen
 existiert nicht
 stimmt nicht überein
 Passwörter stimmen nicht überein
+kann nicht gelöscht werden
 Anmelden
 Abmelden
 GitHub-Profil
@@ -43,3 +44,5 @@ Zurück
 Passwort ändern
 Du hast dein Passwort vergessen? Stelle dein Account <a href="/recover">hier</a> wieder her.
 Du bist derzeit als {{print get "username" variables}} angemeldet.
+Jetzt registrieren
+Du bist neu hier? Registriere dich jetzt, um mehr Funktionalitäten freizuschalten.
