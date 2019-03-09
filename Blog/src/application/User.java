@@ -19,6 +19,7 @@ public class User extends ObjectTemplate {
 	
 	public User(String name) {
 		super(name);
+		
 		username = new IdentifiableStringTemplate("username", 2, 16);
 		password = new StringTemplate("password", 4, 32, (Object value) -> {
 			return hash((String) value);
@@ -61,7 +62,13 @@ public class User extends ObjectTemplate {
 	public String getMail() {
 		return (String) email.get();
 	}
-	
-	
+
+	public void setPassword(String string) {
+		password.set(string);
+	}
+
+	public void setMail(String string) {
+		email.set(string);
+	}
 
 }

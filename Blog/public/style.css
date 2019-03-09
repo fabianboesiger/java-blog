@@ -199,10 +199,6 @@ img{
 	animation: active-users 0.7s ease 0s infinite alternate;
 }
 
-#register{
-	text-transform: uppercase;
-}
-
 pre{
 	overflow-x: auto;
 	font-family: var(--code-font);

@@ -2,6 +2,7 @@ uptime
 sessions
 active-sessions
 handles-per-day
+bytes-per-day
 active-users
 error
 not-found
@@ -44,5 +45,5 @@ back
 change-password
 forgot-password
 signed-in-as
-signup-now
 introduction
+recover

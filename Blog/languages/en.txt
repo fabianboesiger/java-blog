@@ -2,6 +2,7 @@ Uptime
 Sessions
 Active Sessions
 Handles per Day
+Bytes per Day
 {{print get "active-sessions" variables}} users online!
 Error
 Page not found
@@ -43,6 +44,6 @@ Change Email
 Back
 Change Password
 You forgot your password? Recover your account <a href="/recover">here</a>.
-You are currently signed in as {{print get "username" variables}}.
-Sign up now
-You are new here? Sign up now to gain access to extra features.
+You are currently signed in as {{print htmlencode get "username" variables}}.
+You are new here? <a href="/signup">Sign up now</a> to gain access to extra features.
+Recover Account

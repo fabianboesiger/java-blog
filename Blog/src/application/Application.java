@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -22,8 +23,8 @@ public class Application {
 	
 	public Application() throws IOException {		
 		database = new Database();
-		responder = new Responder(predefined);
-		mailer = new Mailer(predefined);
+		responder = new Responder(predefined, new File("views/web"));
+		mailer = new Mailer(predefined, new File("views/mail"));
 		server = new Server(responder, 8000);
 		setup();
 	}
@@ -58,6 +59,34 @@ public class Application {
 			variables.put("sessions", "" + server.sessionsCount());
 			variables.put("active-sessions", "" + server.activeCount());
 			variables.put("handles-per-day", "" + Math.round(server.handlesPerDay()));
+			double bytesPerDay = server.bytesPerDay();
+			String formatted = null;
+			for(int i = 3; i >= 0; i--) {
+				double power = Math.pow(1000, i);
+				if(bytesPerDay >= power) {
+					formatted = String.format("%.3f", (bytesPerDay / power)) + " ";
+					switch(i) {
+					case 0:
+						formatted += "B";
+						break;
+					case 1:
+						formatted += "KB";
+						break;
+					case 2:
+						formatted += "MB";
+						break;
+					case 3:
+						formatted += "GB";
+						break;
+					}
+					break;
+				}
+			}
+			if(formatted == null) {
+				formatted = String.format("%.3f", bytesPerDay) + " B";
+			}
+			
+			variables.put("bytes-per-day", "" + formatted);
 			
 			return responder.render("stats.html", request.languages, variables);
 		});
@@ -75,11 +104,59 @@ public class Application {
 		});
 		
 		server.on("GET", "/profile/email", (Request request) -> {
-			return responder.render("email.html", request.languages);
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("email.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/profile/email", (Request request) -> {
+			Messages messages = new Messages();
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				user.setMail(request.parameters.get("email"));
+				if(user.validate(messages)) {
+					if(database.update(user)) {
+						return responder.redirect("/profile");
+					}
+				}
+			} else {
+				messages.add("user", "does-not-exist");
+			}
+			
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/profile/email");
 		});
 		
 		server.on("GET", "/profile/password", (Request request) -> {
-			return responder.render("password.html", request.languages);
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("password.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/profile/password", (Request request) -> {
+			Messages messages = new Messages();
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				user.setPassword(request.parameters.get("password"));
+				if(user.validate(messages)) {
+					if(database.update(user)) {
+						return responder.redirect("/profile");
+					}
+				}
+			} else {
+				messages.add("user", "does-not-exist");
+			}
+			
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/profile/password");
 		});
 		
 		server.on("GET", "/profile/delete", (Request request) -> {
@@ -107,7 +184,7 @@ public class Application {
 		
 		server.on("GET", "/signup", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			
+
 			Messages messages = (Messages) request.session.getFlash("errors");
 			if(messages != null) {
 				messages.addToVariables(variables, "errors");
@@ -118,8 +195,8 @@ public class Application {
 		
 		server.on("POST", "/signup", (Request request) -> {
 			User user = new User();
-			user.parseFromMap(request.parameters);
-			
+			user.parseFromParameters(request.parameters);
+
 			Messages messages = new Messages();
 			
 			if(user.validate(messages)) {
@@ -135,7 +212,7 @@ public class Application {
 					messages.add("username", "in-use");
 				}
 			}
-			
+
 			request.session.addFlash("errors", messages);
 			return responder.redirect("/signup");
 		});
@@ -173,6 +250,10 @@ public class Application {
 		server.on("GET", "/signout", (Request request) -> {
 			request.session.logout();
 			return responder.redirect("/");
+		});
+		
+		server.on("GET", "/recover", (Request request) -> {			
+			return responder.render("recover.html", request.languages);
 		});
 		
 	}
