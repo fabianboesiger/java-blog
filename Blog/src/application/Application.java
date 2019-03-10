@@ -317,7 +317,6 @@ public class Application {
 			return responder.render("unlock.html", request.languages);
 		});
 		
-		
 	}
 
 	private void sendActivationMail(User user, Request request) {
