@@ -1,0 +1,17 @@
+<h1>
+	{{
+		if equals get "username" variables null
+			print translate "hello"
+			print ", "
+			print translate "world"
+			print "!"
+		end
+		if not equals get "username" variables null
+			print translate "hello"
+			print ", "
+			print htmlencode get "username" variables
+			print "!"
+		end
+	}}
+</h1>
+<p>{{print translate "recover-account-email"}}</p>

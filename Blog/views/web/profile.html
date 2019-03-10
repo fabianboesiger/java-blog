@@ -1,6 +1,13 @@
 {{include "top.html"}}
     <h2>{{print translate "profile"}}</h2>
     <p>{{print translate "signed-in-as"}}</p>
+    {{
+        if not get "activated" variables
+            print "<em>"
+            print translate "account-not-activated"
+            print "</em>"
+        end
+    }}
     <a class="button" href="/signout">{{print translate "signout"}}</a>
     <a class="button" href="/profile/email">E-Mail Adresse ändern</a>
     <a class="button" href="/profile/password">Passwort ändern</a>
