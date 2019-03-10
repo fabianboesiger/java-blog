@@ -35,6 +35,7 @@ signin
 signout
 github-profile
 server-stats
+contact
 user
 world
 signup-here
@@ -46,4 +47,12 @@ change-password
 forgot-password
 signed-in-as
 introduction
-recover
+recover-account
+recover-account-confirm
+recover-account-email
+recover-account-error
+activate-account
+activate-account-email
+account-not-activated
+activate-account-error
+not-activated

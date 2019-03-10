@@ -3,15 +3,19 @@ package application;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import database.templates.BooleanTemplate;
 import database.templates.IdentifiableStringTemplate;
 import database.templates.ObjectTemplate;
 import database.templates.StringTemplate;
+import server.Server;
 
 public class User extends ObjectTemplate {
 		
 	private IdentifiableStringTemplate username;
 	private StringTemplate password;
 	private StringTemplate email;
+	private BooleanTemplate activated;
+	private StringTemplate key;
 	
 	public User() {
 		this(null);
@@ -25,6 +29,10 @@ public class User extends ObjectTemplate {
 			return hash((String) value);
 		});
 		email = new StringTemplate("email", 0, 64);
+		activated = new BooleanTemplate("activated");
+		activated.set(false);
+		key = new StringTemplate("key", 64, 64);
+		key.set(Server.generateKey(64));
 		setIdentifier(username);
 	}
 	
@@ -63,12 +71,25 @@ public class User extends ObjectTemplate {
 		return (String) email.get();
 	}
 
-	public void setPassword(String string) {
-		password.set(string);
+	public void setMail(String value) {
+		email.set(value);
+		key.set(Server.generateKey(64));
 	}
 
-	public void setMail(String string) {
-		email.set(string);
+	public void setPassword(String value) {
+		password.set(value);
+	}
+	
+	public boolean getActivated() {
+		return (Boolean) activated.get();
+	}
+	
+	public void setActivated(boolean value) {
+		activated.set(value);
+	}
+
+	public String getKey() {
+		return (String) key.get();
 	}
 
 }

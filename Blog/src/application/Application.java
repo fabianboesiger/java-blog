@@ -32,6 +32,8 @@ public class Application {
 	public void setup() throws IOException {
 		
 		predefined.put("title", "Fälis Blog");
+		predefined.put("url", "http://127.0.0.1:8000");
+		predefined.put("email", "faelisblog@gmail.com");
 
 		server.on("ALL", ".*", (Request request) -> {
 			predefined.put("active-sessions", "" + server.activeCount());
@@ -91,6 +93,19 @@ public class Application {
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
+		server.on("GET", "/activate", (Request request) -> {	
+			User user = null;
+			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
+				if(user.getKey().equals(request.parameters.get("key"))) {
+					request.session.login(user.getUsername());
+					user.setActivated(true);
+					database.update(user);
+					return responder.redirect("/profile");
+				}
+			}
+			return responder.render("activate.html", request.languages);
+		});
+		
 		server.on("ALL", "/profile.*", (Request request) -> {
 			if(request.session.getUsername() == null) {
 				return responder.redirect("/signin");
@@ -99,8 +114,14 @@ public class Application {
 			}
 		});
 		
-		server.on("GET", "/profile", (Request request) -> {			
-			return responder.render("profile.html", request.languages);
+		server.on("GET", "/profile", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				HashMap <String, Object> variables = new HashMap <String, Object> ();
+				variables.put("activated", user.getActivated());
+				return responder.render("profile.html", request.languages, variables);
+			}
+			return responder.redirect("/signin");
 		});
 		
 		server.on("GET", "/profile/email", (Request request) -> {
@@ -109,7 +130,6 @@ public class Application {
 			if(messages != null) {
 				messages.addToVariables(variables, "errors");
 			}
-			
 			return responder.render("email.html", request.languages, variables);
 		});
 		
@@ -118,8 +138,10 @@ public class Application {
 			User user = null;
 			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
 				user.setMail(request.parameters.get("email"));
+				user.setActivated(false);
 				if(user.validate(messages)) {
 					if(database.update(user)) {
+						sendActivationMail(user, request);
 						return responder.redirect("/profile");
 					}
 				}
@@ -203,9 +225,7 @@ public class Application {
 				if(database.save(user)) {
 					request.session.login(user.getUsername());
 					
-					HashMap <String, Object> variables = new HashMap <String, Object> ();
-					variables.put("username", user.getUsername());
-					mailer.send(user.getMail(), "{{print translate \"signup\"}}", "signup.html", request.languages, variables);
+					sendActivationMail(user, request);
 					
 					return responder.redirect("/");
 				} else {
@@ -252,10 +272,67 @@ public class Application {
 			return responder.redirect("/");
 		});
 		
-		server.on("GET", "/recover", (Request request) -> {			
-			return responder.render("recover.html", request.languages);
+		server.on("GET", "/recover", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("recover.html", request.languages, variables);
 		});
 		
+		server.on("POST", "/recover", (Request request) -> {
+			Messages messages = new Messages();
+			User user = null;
+			
+			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
+				if(user.getActivated()) {
+					sendRecoverMail(user, request);
+					return responder.redirect("/recover/confirm");
+				} else {
+					messages.add("user", "not-activated");
+				}
+			} else {
+				messages.add("user", "does-not-exist");
+			}
+			
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/recover");
+		});
+		
+		server.on("GET", "/recover/confirm", (Request request) -> {
+			return responder.render("recover-confirm.html", request.languages);
+		});
+		
+		server.on("GET", "/unlock", (Request request) -> {	
+			User user = null;
+			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
+				if(user.getKey().equals(request.parameters.get("key"))) {
+					request.session.login(user.getUsername());
+					return responder.redirect("/profile/password");
+				}
+			}
+			return responder.render("unlock.html", request.languages);
+		});
+		
+	}
+
+	private void sendActivationMail(User user, Request request) {
+		HashMap <String, Object> variables = new HashMap <String, Object> ();
+		variables.put("username", user.getUsername());
+		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
+		variables.put("key", user.getKey());
+		mailer.send(user.getMail(), "{{print translate \"activate-account\"}}", "activate.html", request.languages, variables);
+	}
+	
+	private void sendRecoverMail(User user, Request request) {
+		HashMap <String, Object> variables = new HashMap <String, Object> ();
+		variables.put("username", user.getUsername());
+		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
+		variables.put("key", user.getKey());
+		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", request.languages, variables);
 	}
 	
 }

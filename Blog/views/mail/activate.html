@@ -9,8 +9,9 @@
 		if not equals get "username" variables null
 			print translate "hello"
 			print ", "
-			print get "username" variables
+			print htmlencode get "username" variables
 			print "!"
 		end
 	}}
 </h1>
+<p>{{print translate "activate-account-email"}}</p>
