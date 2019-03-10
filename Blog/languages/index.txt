@@ -56,3 +56,5 @@ activate-account-email
 account-not-activated
 activate-account-error
 not-activated
+delete-account
+delete-account-warning

@@ -56,3 +56,5 @@ Aktiviere deinen Account jetzt, indem du <a href="{{print get "url" variables}}/
 Dein Account ist noch nicht aktiviert. Bitte prüfe den Posteingang der E-Mail Adresse, die du angegeben hast, um deinen Account zu bestätigen.
 Dieser Link ist veraltet. Bitte suche nach einem neueren Link oder <a href="/profile/email">ändere deine E-Mail Adresse</a> um ein neues Aktivierungs-Mail zu erhalten.
 nicht aktiviert
+Account löschen
+Möchtest du diesen Account wirklich löschen? <strong>Die Löschung eines Accounts kann nicht rückgängig gemacht werden.</strong>

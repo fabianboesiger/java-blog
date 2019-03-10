@@ -56,3 +56,5 @@ Activate your account now by clicking <a href="{{print get "url" variables}}/act
 Your account is not activated. Check the inbox of the email address you provided to activate your account.
 This link is outdated. Please check for a newer link or <a href="/profile/email">change your email address</a> to recieve a new activation email.
 not activated
+Delete account
+Do you really want to delete your account? <strong>The deletion of an account can't be reversed.</strong>
