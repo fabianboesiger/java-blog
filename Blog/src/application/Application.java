@@ -32,7 +32,7 @@ public class Application {
 	public void setup() throws IOException {
 		
 		predefined.put("title", "Fälis Blog");
-		predefined.put("url", "http://127.0.0.1:8000");
+		predefined.put("url", "http://blog.ddnss.ch:8000");
 		predefined.put("email", "faelisblog@gmail.com");
 
 		server.on("ALL", ".*", (Request request) -> {
