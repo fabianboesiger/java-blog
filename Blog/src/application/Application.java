@@ -52,7 +52,14 @@ public class Application {
 		});
 		
 		server.on("GET", "/articles", (Request request) -> {
-			return responder.render("projects.html", request.languages);
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				variables.put("admin", user.isAdmin());
+			}
+			
+			return responder.render("articles.html", request.languages, variables);
 		});
 		
 		server.on("GET", "/server", (Request request) -> {
@@ -124,7 +131,8 @@ public class Application {
 			User user = null;
 			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
-				variables.put("activated", user.getActivated());
+				variables.put("activated", user.isActivated());
+				variables.put("admin", user.isAdmin());
 				return responder.render("profile.html", request.languages, variables);
 			}
 			return responder.redirect("/signin");
@@ -294,7 +302,7 @@ public class Application {
 			User user = null;
 			
 			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
-				if(user.getActivated()) {
+				if(user.isActivated()) {
 					sendRecoverMail(user, request);
 					return responder.redirect("/recover/confirm");
 				} else {

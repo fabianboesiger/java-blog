@@ -179,26 +179,6 @@ img{
 	transform: scale(1.02);
 }
 
-@keyframes active-users{
-	from{
-		transform: scale(1) rotateZ(-20deg);
-	}
-	to{
-		transform: scale(1.1) rotateZ(-20deg);
-	}
-}
-
-#active-users{
-	color: var(--main-text-color);
-	font-size: var(--footer-text-size);
-	position: absolute;
-	line-height: 1em;
-	top: 80px;
-	left: calc(50% + 55px);
-	width: 80px;
-	animation: active-users 0.7s ease 0s infinite alternate;
-}
-
 pre{
 	overflow-x: auto;
 	font-family: var(--code-font);
@@ -321,25 +301,6 @@ nav > a.active, nav > a.active:hover, nav > a.active:focus{
 	color: var(--outside-color);
 }
 
-/* Collapsibles */
-/*
-.collapsible{
-	cursor: pointer;
-	border-bottom: 2px dashed var(--main-text-color);
-}
-
-.collapsible::after{
-	content: " ▼";
-}
-
-.collapsible.active::after{
-	content: " ▲";
-}
-
-div .content{
-	display: none;
-}
-*/
 /* Alignment */
 
 div .flex{

@@ -1,28 +1,5 @@
 window.addEventListener("load", function() {
 
-	// Make Collapsibles functional
-	/*
-	let collapsibles = document.getElementsByClassName("collapsible");
-	for(let i = 0; i < collapsibles.length; i++) {
-		collapsibles[i].addEventListener("click", function() {
-			this.classList.toggle("active");
-			var content = this.nextElementSibling;
-			if(content.style.display === "block") {
-				content.style.display = "none";
-			} else {
-				content.style.display = "block";
-			}
-			// Collapse other collapsibles
-			for(let j = 0; j < collapsibles.length; j++) {
-				if(collapsibles[j] !== this) {
-					collapsibles[j].classList.remove("active");
-					collapsibles[j].nextElementSibling.style.display = "none";
-				}
-			}
-		});
-	}
-	*/
-	
 	// Replace Date
 	let year = new Date().getFullYear();
 	let years = document.getElementsByClassName("year");

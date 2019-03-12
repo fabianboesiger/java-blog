@@ -3,7 +3,6 @@ sessions
 active-sessions
 handles-per-day
 bytes-per-day
-active-users
 error
 not-found
 internal-server-error
@@ -58,3 +57,8 @@ activate-account-error
 not-activated
 delete-account
 delete-account-warning
+admin-mode
+create-article
+delete-article
+publish-article
+hide-article

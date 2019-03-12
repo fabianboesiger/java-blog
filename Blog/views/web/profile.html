@@ -2,6 +2,13 @@
     <h2>{{print translate "profile"}}</h2>
     <p>{{print translate "signed-in-as"}}</p>
     {{
+        if get "admin" variables
+            print "<em>"
+            print translate "admin-mode"
+            print "</em>"
+        end
+    }}
+    {{
         if not get "activated" variables
             print "<em>"
             print translate "account-not-activated"

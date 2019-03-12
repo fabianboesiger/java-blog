@@ -16,6 +16,7 @@ public class User extends ObjectTemplate {
 	private StringTemplate email;
 	private BooleanTemplate activated;
 	private StringTemplate key;
+	private BooleanTemplate admin;
 	
 	public User() {
 		this(null);
@@ -33,6 +34,8 @@ public class User extends ObjectTemplate {
 		activated.set(false);
 		key = new StringTemplate("key", 64, 64);
 		key.set(Server.generateKey(64));
+		admin = new BooleanTemplate("admin");
+		admin.set(false);
 		setIdentifier(username);
 	}
 	
@@ -80,7 +83,7 @@ public class User extends ObjectTemplate {
 		password.set(value);
 	}
 	
-	public boolean getActivated() {
+	public boolean isActivated() {
 		return (Boolean) activated.get();
 	}
 	
@@ -90,6 +93,10 @@ public class User extends ObjectTemplate {
 
 	public String getKey() {
 		return (String) key.get();
+	}
+	
+	public boolean isAdmin() {
+		return (Boolean) admin.get();
 	}
 
 }

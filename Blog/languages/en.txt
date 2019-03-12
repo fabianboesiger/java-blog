@@ -3,7 +3,6 @@ Sessions
 Active Sessions
 Handles per Day
 Bytes per Day
-{{print get "active-sessions" variables}} users online!
 Error
 Page not found
 Internal server error
@@ -35,7 +34,7 @@ Sign in
 Sign out
 GitHub Profile
 Server Statistics
-Contact
+Get in touch
 User
 World
 You dont have an Account? Sign up <a href="/signup">here</a>.
@@ -58,3 +57,8 @@ This link is outdated. Please check for a newer link or <a href="/profile/email"
 not activated
 Delete account
 Do you really want to delete your account? <strong>The deletion of an account can't be reversed.</strong>
+You currently have administrator rights.
+Create article
+Delete article
+Publish article
+Hide article
