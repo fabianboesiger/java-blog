@@ -19,12 +19,6 @@ public class User extends ObjectTemplate {
 	private BooleanTemplate admin;
 	
 	public User() {
-		this(null);
-	}
-	
-	public User(String name) {
-		super(name);
-		
 		username = new IdentifiableStringTemplate("username", 2, 16);
 		password = new StringTemplate("password", 4, 32, (Object value) -> {
 			return hash((String) value);

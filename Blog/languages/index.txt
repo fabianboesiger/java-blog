@@ -62,3 +62,6 @@ create-article
 delete-article
 publish-article
 hide-article
+headline
+lead
+content

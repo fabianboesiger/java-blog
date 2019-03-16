@@ -62,3 +62,6 @@ Artikel erstellen
 Artikel löschen
 Artikel publizieren
 Artikel verstecken
+Schlagzeile
+Vorspann
+Inhalt

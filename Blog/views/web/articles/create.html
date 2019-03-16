@@ -1,0 +1,20 @@
+{{include "top.html"}}
+	<form action="/articles/create" method="POST">
+		<h2>{{print translate "create-article"}}</h2>
+		<div>
+			<label for="headline">{{print translate "headline"}}</label>
+			<input type="text" name="headline" id="headline"  minlength="0" maxlength="128"/>
+		</div>
+		<div>
+			<label for="lead">{{print translate "lead"}}</label>
+			<input type="text" name="lead" id="lead"  minlength="0" maxlength="128"></input>
+		</div>
+		<div>
+			<label for="content">{{print translate "content"}}</label>
+			<textarea type="text" name="content" id="content"  minlength="0" maxlength="128" rows="8"></textarea>
+		</div>
+		<input type="submit" value="{{print translate "submit"}}" id="submit"/>
+		<a class="button" href="/articles">{{print translate "back"}}</a>
+		{{include "messages.html"}}
+	</form>
+{{include "bottom.html"}}

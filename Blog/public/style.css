@@ -7,7 +7,7 @@
 	--main-text-color: #2C2C2C;
 	--error-color: #C94731;
 
-	--max-width: 1024px;
+	--max-width: 768px;
 	--max-form-width: 512px;
 
 	--heading-font: AbrilFatface, sans-serif;
@@ -108,7 +108,7 @@ main, header, footer{
 	padding-right: var(--padding);
 }
 
-.centered > *:not(script), .content > *, form > *{
+.centered > *:not(script), .content > *, form > *, .article > *{
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -118,7 +118,7 @@ main, header, footer{
 
 /* General Element Styling */
 
-h1, h2{
+h1, h2, h3{
 	font-family: var(--heading-font);
 	font-weight: normal;
 }
@@ -129,6 +129,10 @@ h1{
 
 h2{
 	font-size: 32px;
+}
+
+h3{
+	font-size: 24px;
 }
 
 ul{
@@ -143,6 +147,7 @@ a{
 	color: var(--outside-color);
 	transition: all 0.2s;
 	outline: none;
+	cursor: pointer;
 }
 
 main a{
@@ -163,10 +168,6 @@ main a:hover, main a:focus{
 	color: var(--main-text-color);
 }
 
-img{
-	width: 100%;
-}
-
 #title{
 	display: inline-block;
 	padding: 0px;
@@ -182,6 +183,24 @@ img{
 pre{
 	overflow-x: auto;
 	font-family: var(--code-font);
+}
+
+.article{
+	border-top: 1px solid var(--main-text-color);
+	border-bottom: 1px solid var(--main-text-color);
+	text-decoration: none;
+}
+
+.article:hover, .article:focus{
+	color: var(--outside-text-color);
+	border-top: 1px solid var(--outside-text-color);
+	border-bottom: 1px solid var(--outside-text-color);
+}
+
+.article > *{
+	margin: 0px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 
 /* Tables */
@@ -211,8 +230,13 @@ form{
 	max-width: var(--max-form-width);
 }
 
-input{
+input, textarea, .button{
+	box-sizing: border-box;
 	width: 100%;
+	transition: all 0.2s;
+}
+
+input, textarea{
 	outline: none;
 	border: none;
 	color: var(--main-text-color);
@@ -222,7 +246,6 @@ input{
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
-	transition: all 0.2s;
 }
 
 input[type=text], input[type=password], input[type=email]{
@@ -238,13 +261,10 @@ input[type=text]:hover, input[type=text]:focus, input[type=password]:hover, inpu
 }
 
 input[type=submit], .button{
-	box-sizing: border-box;
-	width: 100%;
 	padding: 8px;
 	text-align: center;
 	background-color: var(--main-text-color);
 	color: var(--main-color);
-	cursor: pointer;
 	text-decoration: none;
 	transform: translate(0, 4px);
 	box-shadow: 0px -4px var(--outside-color);
@@ -262,6 +282,16 @@ input[type=submit]:active, input[type=submit].active, .button:active, .button.ac
 	color: var(--main-color);
 	transform: translate(0, 0px);
 	box-shadow: 0px -1px var(--outside-color);
+}
+
+textarea{
+	resize: vertical;
+	border: 2px solid var(--main-text-color);
+	background-color: white;
+}
+
+textarea:hover, textarea:focus{
+	border: 2px solid var(--outside-text-color);
 }
 
 .errors li{

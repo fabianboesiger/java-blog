@@ -62,3 +62,6 @@ Create article
 Delete article
 Publish article
 Hide article
+Headline
+Lead
+Content

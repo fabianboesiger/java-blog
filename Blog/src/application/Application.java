@@ -3,9 +3,12 @@ package application;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.function.Predicate;
 
 import database.Database;
 import database.Messages;
+import database.templates.ObjectTemplate;
 import mailer.Mailer;
 import server.Request;
 import server.Responder;
@@ -31,7 +34,18 @@ public class Application {
 		setup();
 	}
 	
-	public void setup() throws IOException {
+	private void setup() throws IOException {
+		
+		indexRoutes();
+		serverRoutes();
+		articleRoutes();
+		signRoutes();
+		recoveryRoutes();
+		profileRoutes();
+		
+	}
+	
+	private void indexRoutes() {
 		
 		predefined.put("title", "Fälis Blog");
 		if(PRODUCTION) {
@@ -42,7 +56,6 @@ public class Application {
 		predefined.put("email", "faelisblog@gmail.com");
 
 		server.on("ALL", ".*", (Request request) -> {
-			predefined.put("active-sessions", "" + server.activeCount());
 			predefined.put("username", request.session.getUsername());
 			return responder.next();
 		});
@@ -50,6 +63,10 @@ public class Application {
 		server.on("GET", "/", (Request request) -> {
 			return responder.render("index.html", request.languages);
 		});
+		
+	}
+	
+	private void articleRoutes() {
 		
 		server.on("GET", "/articles", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
@@ -59,8 +76,55 @@ public class Application {
 				variables.put("admin", user.isAdmin());
 			}
 			
-			return responder.render("articles.html", request.languages, variables);
+			LinkedList <ObjectTemplate> articleObjects = database.loadAll(Article.class, 0);
+			LinkedList <HashMap <String, Object>> articles = new LinkedList <HashMap <String, Object>> ();
+
+			if(articleObjects != null) {
+				for(ObjectTemplate articleObject : articleObjects) {
+					articles.add(((Article) articleObject).getValues());
+				}
+			}
+
+			variables.put("articles", articles);
+			
+			return responder.render("articles/index.html", request.languages, variables);
 		});
+		
+		server.on("GET", "/articles/create", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+
+			return responder.render("articles/create.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/articles/create", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				Article article = new Article();
+				article.parseFromParameters(request.parameters);
+				article.setAuthor(user);
+
+				Messages messages = new Messages();
+				
+				if(article.validate(messages)) {
+					if(database.save(article)) {
+						return responder.redirect("/articles");
+					}
+				}
+
+				request.session.addFlash("errors", messages);
+				return responder.redirect("/articles/create");
+			}
+			return responder.redirect("/signin");
+		});
+		
+	}
+	
+	private void serverRoutes() {
 		
 		server.on("GET", "/server", (Request request) -> {
 			return responder.render("server.html", request.languages);
@@ -106,116 +170,38 @@ public class Application {
 			return responder.render("stats.html", request.languages, variables);
 		});
 		
-		server.on("GET", "/activate", (Request request) -> {	
+	}
+	
+	private void signRoutes() {
+		
+		server.on("GET", "/signin", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("signin.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/signin", (Request request) -> {
+			Messages messages = new Messages();
 			User user = null;
-			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
-				if(user.getKey().equals(request.parameters.get("key"))) {
+			
+			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
+				if(user.authenticate(request.parameters.get("password"))) {
 					request.session.login(user.getUsername());
-					user.setActivated(true);
-					database.update(user);
-					return responder.redirect("/profile");
+					return responder.redirect("/");
+				} else {
+					messages.add("password", "does-not-match");
 				}
-			}
-			return responder.render("activate.html", request.languages);
-		});
-		
-		server.on("ALL", "/profile.*", (Request request) -> {
-			if(request.session.getUsername() == null) {
-				return responder.redirect("/signin");
 			} else {
-				return responder.next();
+				messages.add("user", "does-not-exist");
 			}
-		});
-		
-		server.on("GET", "/profile", (Request request) -> {
-			User user = null;
-			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
-				HashMap <String, Object> variables = new HashMap <String, Object> ();
-				variables.put("activated", user.isActivated());
-				variables.put("admin", user.isAdmin());
-				return responder.render("profile.html", request.languages, variables);
-			}
+			
+			request.session.addFlash("errors", messages);
 			return responder.redirect("/signin");
-		});
-		
-		server.on("GET", "/profile/email", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			return responder.render("email.html", request.languages, variables);
-		});
-		
-		server.on("POST", "/profile/email", (Request request) -> {
-			Messages messages = new Messages();
-			User user = null;
-			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
-				user.setMail(request.parameters.get("email"));
-				user.setActivated(false);
-				if(user.validate(messages)) {
-					if(database.update(user)) {
-						sendActivationMail(user, request);
-						return responder.redirect("/profile");
-					}
-				}
-			} else {
-				messages.add("user", "does-not-exist");
-			}
-			
-			request.session.addFlash("errors", messages);
-			return responder.redirect("/profile/email");
-		});
-		
-		server.on("GET", "/profile/password", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
-			return responder.render("password.html", request.languages, variables);
-		});
-		
-		server.on("POST", "/profile/password", (Request request) -> {
-			Messages messages = new Messages();
-			User user = null;
-			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
-				user.setPassword(request.parameters.get("password"));
-				if(user.validate(messages)) {
-					if(database.update(user)) {
-						return responder.redirect("/profile");
-					}
-				}
-			} else {
-				messages.add("user", "does-not-exist");
-			}
-			
-			request.session.addFlash("errors", messages);
-			return responder.redirect("/profile/password");
-		});
-		
-		server.on("GET", "/profile/delete", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
-			return responder.render("delete.html", request.languages, variables);
-		});
-		
-		server.on("GET", "/profile/delete/confirm", (Request request) -> {
-			if(database.delete(User.class, request.session.getUsername())) {
-				request.session.logout();
-				return responder.redirect("/");
-			} else {
-				Messages messages = new Messages();
-				messages.add("user", "deletion-error");
-				request.session.addFlash("errors", messages);
-				return responder.redirect("/profile/delete");
-			}
-			
 		});
 		
 		server.on("GET", "/signup", (Request request) -> {
@@ -251,39 +237,26 @@ public class Application {
 			return responder.redirect("/signup");
 		});
 		
-		server.on("GET", "/signin", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
-			return responder.render("signin.html", request.languages, variables);
-		});
-		
-		server.on("POST", "/signin", (Request request) -> {
-			Messages messages = new Messages();
-			User user = null;
-			
-			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
-				if(user.authenticate(request.parameters.get("password"))) {
-					request.session.login(user.getUsername());
-					return responder.redirect("/");
-				} else {
-					messages.add("password", "does-not-match");
-				}
-			} else {
-				messages.add("user", "does-not-exist");
-			}
-			
-			request.session.addFlash("errors", messages);
-			return responder.redirect("/signin");
-		});
-		
 		server.on("GET", "/signout", (Request request) -> {
 			request.session.logout();
 			return responder.redirect("/");
+		});
+		
+	}
+	
+	private void recoveryRoutes() {
+		
+		server.on("GET", "/activate", (Request request) -> {	
+			User user = null;
+			if((user = (User) database.loadId(User.class, request.parameters.get("id"))) != null) {
+				if(user.getKey().equals(request.parameters.get("key"))) {
+					request.session.login(user.getUsername());
+					user.setActivated(true);
+					database.update(user);
+					return responder.redirect("/profile");
+				}
+			}
+			return responder.render("recover/activate.html", request.languages);
 		});
 		
 		server.on("GET", "/recover", (Request request) -> {
@@ -294,7 +267,7 @@ public class Application {
 				messages.addToVariables(variables, "errors");
 			}
 			
-			return responder.render("recover.html", request.languages, variables);
+			return responder.render("recover/index.html", request.languages, variables);
 		});
 		
 		server.on("POST", "/recover", (Request request) -> {
@@ -317,7 +290,7 @@ public class Application {
 		});
 		
 		server.on("GET", "/recover/confirm", (Request request) -> {
-			return responder.render("recover-confirm.html", request.languages);
+			return responder.render("recover/confirm.html", request.languages);
 		});
 		
 		server.on("GET", "/unlock", (Request request) -> {	
@@ -328,7 +301,110 @@ public class Application {
 					return responder.redirect("/profile/password");
 				}
 			}
-			return responder.render("unlock.html", request.languages);
+			return responder.render("recover/unlock.html", request.languages);
+		});
+		
+	}
+	
+	private void profileRoutes() {
+		
+		server.on("ALL", "/profile.*", (Request request) -> {
+			if(request.session.getUsername() == null) {
+				return responder.redirect("/signin");
+			} else {
+				return responder.next();
+			}
+		});
+		
+		server.on("GET", "/profile", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				HashMap <String, Object> variables = new HashMap <String, Object> ();
+				variables.put("activated", user.isActivated());
+				variables.put("admin", user.isAdmin());
+				return responder.render("profile/index.html", request.languages, variables);
+			}
+			return responder.redirect("/signin");
+		});
+		
+		server.on("GET", "/profile/email", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			return responder.render("profile/email.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/profile/email", (Request request) -> {
+			Messages messages = new Messages();
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				user.setMail(request.parameters.get("email"));
+				user.setActivated(false);
+				if(user.validate(messages)) {
+					if(database.update(user)) {
+						sendActivationMail(user, request);
+						return responder.redirect("/profile");
+					}
+				}
+			} else {
+				messages.add("user", "does-not-exist");
+			}
+			
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/profile/email");
+		});
+		
+		server.on("GET", "/profile/password", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("profile/password.html", request.languages, variables);
+		});
+		
+		server.on("POST", "/profile/password", (Request request) -> {
+			Messages messages = new Messages();
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				user.setPassword(request.parameters.get("password"));
+				if(user.validate(messages)) {
+					if(database.update(user)) {
+						return responder.redirect("/profile");
+					}
+				}
+			} else {
+				messages.add("user", "does-not-exist");
+			}
+			
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/profile/password");
+		});
+		
+		server.on("GET", "/profile/delete", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+			Messages messages = (Messages) request.session.getFlash("errors");
+			if(messages != null) {
+				messages.addToVariables(variables, "errors");
+			}
+			
+			return responder.render("profile/delete.html", request.languages, variables);
+		});
+		
+		server.on("GET", "/profile/delete/confirm", (Request request) -> {
+			if(database.delete(User.class, request.session.getUsername())) {
+				request.session.logout();
+				return responder.redirect("/");
+			} else {
+				Messages messages = new Messages();
+				messages.add("user", "deletion-error");
+				request.session.addFlash("errors", messages);
+				return responder.redirect("/profile/delete");
+			}
+			
 		});
 		
 	}
