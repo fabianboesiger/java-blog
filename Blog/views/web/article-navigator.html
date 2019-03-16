@@ -1,0 +1,17 @@
+{{
+    if or not equals get "previous" variables null not equals get "next" variables null
+        print "<div id=\"article-navigator\">"
+        if not equals get "previous" variables null
+            print "<a href=\"articles?page="
+            print get "previous" variables
+            print "\">◀</a>"
+        end
+
+        if not equals get "next" variables null
+            print "<a href=\"articles?page="
+            print get "next" variables
+            print "\">▶</a>"
+        end
+        print "</div>"
+    end
+}}
