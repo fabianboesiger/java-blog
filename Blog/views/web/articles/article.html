@@ -1,0 +1,27 @@
+{{include "top.html"}}
+{{
+    print "<h2>"
+    print get "headline" get "article" variables
+    print "</h2>"
+    print "<em>"
+    print get "author" get "article" variables
+    print ", "
+    print get "date" get "article" variables
+    print "</em>"
+    print "<p>"
+    print get "lead" get "article" variables
+    print "</p>"
+    
+    if not equals get "admin" variables null
+        if get "admin" variables
+            print "<a class=\"button\" href=\"/articles/delete\">"
+            print translate "delete-article"
+            print "</a>"
+            print "<a class=\"button\" href=\"/articles/visible\">"
+            print translate "hide-article"
+            print "</a>"
+        end
+    end
+}}
+<a class="button" href="/articles">{{print translate "back"}}</a>
+{{include "bottom.html"}}

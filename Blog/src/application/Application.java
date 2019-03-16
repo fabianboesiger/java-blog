@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.function.Predicate;
 
 import database.Database;
 import database.Messages;
@@ -69,22 +68,48 @@ public class Application {
 	private void articleRoutes() {
 		
 		server.on("GET", "/articles", (Request request) -> {
+			
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
+			
+			int page = 0;
+			int range = 8;
+			if(request.parameters.containsKey("page")) {
+				page = Integer.parseInt(request.parameters.get("page"));
+			}
+			
+			boolean admin = false;
+			
 			User user = null;
 			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
 				variables.put("admin", user.isAdmin());
+				admin = true;
 			}
 			
-			LinkedList <ObjectTemplate> articleObjects = database.loadAll(Article.class, 0);
+			LinkedList <ObjectTemplate> articleObjects = null;
+			if(admin) {
+				articleObjects = database.loadAll(Article.class);
+			} else {
+				articleObjects = database.loadAll(Article.class, (ObjectTemplate objectTemplate) -> {
+					Article article = (Article) objectTemplate;
+					return article.isVisible();
+				});
+			}
 			LinkedList <HashMap <String, Object>> articles = new LinkedList <HashMap <String, Object>> ();
-
+			
 			if(articleObjects != null) {
-				for(ObjectTemplate articleObject : articleObjects) {
-					articles.add(((Article) articleObject).getValues());
+				for(int i = 0; i < articleObjects.size(); i++) {
+					if(articleObjects.size() - 1 - i >= page * range && articleObjects.size() - 1 - i < (page + 1) * range) {
+						articles.addFirst(((Article) articleObjects.get(i)).getValues());
+					}
 				}
 			}
-
+			
+			Integer previous = (page > 0) ? (page - 1) : null;
+			Integer next = (articleObjects.size() > (page + 1) * range) ? (page + 1) : null;
+			
+			variables.put("previous", previous);
+			variables.put("next", next);
+			
 			variables.put("articles", articles);
 			
 			return responder.render("articles/index.html", request.languages, variables);
@@ -120,6 +145,25 @@ public class Application {
 				return responder.redirect("/articles/create");
 			}
 			return responder.redirect("/signin");
+		});
+		
+		server.on("GET", "/articles/article/(.*)", (Request request) -> {
+			HashMap <String, Object> variables = new HashMap <String, Object> ();
+
+			
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
+				variables.put("admin", user.isAdmin());
+			}
+			
+			Article article = null;
+			if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+				variables.put("article", article.getValues());
+				return responder.render("articles/article.html", request.languages, variables);
+			} else {
+				return responder.redirect("/articles");
+			}
+			
 		});
 		
 	}

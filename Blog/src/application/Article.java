@@ -3,6 +3,7 @@ package application;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import database.templates.BooleanTemplate;
 import database.templates.ObjectTemplate;
 import database.templates.ObjectTemplateReference;
 import database.templates.StringTemplate;
@@ -13,12 +14,15 @@ public class Article extends ObjectTemplate {
 	private StringTemplate lead;
 	private StringTemplate content;
 	private ObjectTemplateReference <User> author;
+	private BooleanTemplate visible;
 	
 	public Article() {
 		headline = new StringTemplate("headline", 0, 128);
 		lead = new StringTemplate("lead", 0, 128);
 		content = new StringTemplate("content", 0, 128);
 		author = new ObjectTemplateReference <User> ("author", User::new);
+		visible = new BooleanTemplate("visible");
+		visible.set(false);
 	}
 
 	public void setAuthor(User user) {
@@ -30,7 +34,12 @@ public class Article extends ObjectTemplate {
 		map.put("headline",	headline.get());
 		map.put("lead",	lead.get());
 		map.put("content", content.get());
-		map.put("author", ((User) author.get()).getUsername());
+		String username = null;
+		User user = ((User) author.get());
+		if(user != null) {
+			username = user.getUsername();
+		}
+		map.put("author", username);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis((Long) timestamp.get());
 		map.put("date", 
@@ -39,7 +48,16 @@ public class Article extends ObjectTemplate {
 			calendar.get(Calendar.YEAR) + " " + 
 			String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + ":" + 
 			String.format("%02d", calendar.get(Calendar.MINUTE)));
+		map.put("id", id);
 		return map;
+	}
+	
+	public void setVisible(boolean value) {
+		visible.set(false);
+	}
+	
+	public boolean isVisible() {
+		return (Boolean) visible.get();
 	}
 
 }
