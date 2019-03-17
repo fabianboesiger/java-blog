@@ -1,5 +1,5 @@
 {{include "top.html"}}
-	<form action="/articles/create" method="POST">
+	<form action="/articles/create" method="POST" class="full-width">
 		<h2>{{print translate "create-article"}}</h2>
 		<div>
 			<label for="headline">{{print translate "headline"}}</label>
@@ -11,7 +11,7 @@
 		</div>
 		<div>
 			<label for="content">{{print translate "content"}}</label>
-			<textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="8"></textarea>
+			<textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="16"></textarea>
 		</div>
 		<input type="submit" value="{{print translate "submit"}}" id="submit"/>
 		<a class="button" href="/articles">{{print translate "back"}}</a>

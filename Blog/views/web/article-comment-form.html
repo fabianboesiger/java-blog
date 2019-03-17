@@ -1,0 +1,9 @@
+<form action="/articles/article/{{print get "id" get "article" variables}}" method="POST" class="full-width">
+    <h2>{{print translate "write-comment"}}</h2>
+    <div>
+        <label for="content">{{print translate "content"}}</label>
+        <textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="8"></textarea>
+    </div>
+    <input type="submit" value="{{print translate "submit"}}" id="submit"/>
+    {{include "messages.html"}}
+</form>

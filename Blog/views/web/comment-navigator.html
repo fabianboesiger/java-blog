@@ -2,13 +2,17 @@
     if or not equals get "previous" variables null not equals get "next" variables null
         print "<div class=\"navigator\">"
         if not equals get "previous" variables null
-            print "<a href=\"articles?page="
+            print "<a href=\"/articles/article/"
+            print get "id" get "article" variables
+            print "?page="
             print get "previous" variables
             print "\">◀</a>"
         end
 
         if not equals get "next" variables null
-            print "<a href=\"articles?page="
+            print "<a href=\"/articles/article/"
+            print get "id" get "article" variables
+            print "?page="
             print get "next" variables
             print "\">▶</a>"
         end

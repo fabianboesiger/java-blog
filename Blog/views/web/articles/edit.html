@@ -1,0 +1,20 @@
+{{include "top.html"}}
+	<form action="/articles/edit/{{print get "id" get "article" variables}}" method="POST" class="full-width">
+		<h2>{{print translate "edit-article"}}</h2>
+		<div>
+			<label for="headline">{{print translate "headline"}}</label>
+			<input type="text" name="headline" id="headline"  minlength="0" maxlength="128" value="{{print get "headline" get "article" variables}}"/>
+		</div>
+		<div>
+			<label for="lead">{{print translate "lead"}}</label>
+			<input type="text" name="lead" id="lead"  minlength="0" maxlength="512" value="{{print get "lead" get "article" variables}}"></input>
+		</div>
+		<div>
+			<label for="content">{{print translate "content"}}</label>
+			<textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="16">{{print htmlencode get "headline" get "article" variables}}</textarea>
+		</div>
+		<input type="submit" value="{{print translate "submit"}}" id="submit"/>
+		<a class="button" href="/articles">{{print translate "back"}}</a>
+		{{include "messages.html"}}
+	</form>
+{{include "bottom.html"}}
