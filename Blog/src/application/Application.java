@@ -189,7 +189,6 @@ public class Application {
 				
 				variables.put("previous", previous);
 				variables.put("next", next);
-				
 				variables.put("comments", comments);
 				
 				return responder.render("articles/article.html", request.languages, variables);
