@@ -62,6 +62,11 @@ create-article
 delete-article
 publish-article
 hide-article
+edit-article
 headline
 lead
 content
+write-comment
+comments
+unknown-author
+delete-comment

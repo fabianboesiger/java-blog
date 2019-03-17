@@ -62,6 +62,11 @@ Create article
 Delete article
 Publish article
 Hide article
+Edit article
 Headline
 Lead
 Content
+Write a Comment
+Comments
+Unknown Author
+Delete Comment

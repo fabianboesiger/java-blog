@@ -15,7 +15,7 @@ import server.Server;
 
 public class Application {
 	
-	private static final boolean PRODUCTION = true;
+	private static final boolean PRODUCTION = false;
 	
 	private Database database;
 	private Responder responder;
@@ -68,7 +68,6 @@ public class Application {
 	private void articleRoutes() {
 		
 		server.on("GET", "/articles", (Request request) -> {
-			
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			
 			int page = 0;
@@ -82,9 +81,9 @@ public class Application {
 			User user = null;
 			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
 				variables.put("admin", user.isAdmin());
-				admin = true;
+				admin = user.isAdmin();
 			}
-			
+
 			LinkedList <ObjectTemplate> articleObjects = null;
 			if(admin) {
 				articleObjects = database.loadAll(Article.class);
@@ -103,7 +102,7 @@ public class Application {
 					}
 				}
 			}
-			
+
 			Integer previous = (page > 0) ? (page - 1) : null;
 			Integer next = (articleObjects.size() > (page + 1) * range) ? (page + 1) : null;
 			
@@ -117,12 +116,7 @@ public class Application {
 		
 		server.on("GET", "/articles/create", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("articles/create.html", request.languages, variables);
 		});
 		
@@ -150,15 +144,53 @@ public class Application {
 		server.on("GET", "/articles/article/(.*)", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 
+			boolean admin = false;
 			
 			User user = null;
 			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
 				variables.put("admin", user.isAdmin());
+				admin = user.isAdmin();
 			}
 			
-			Article article = null;
+			final Article article;
 			if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+				if(!article.isVisible() && !admin) {
+					return responder.redirect("/signin");
+				}
 				variables.put("article", article.getValues());
+				addMessagesFlashToVariables(request, "errors", variables);
+				
+				int page = 0;
+				int range = 8;
+				if(request.parameters.containsKey("page")) {
+					page = Integer.parseInt(request.parameters.get("page"));
+				}
+								
+				LinkedList <ObjectTemplate> commentObjects = null;
+				commentObjects = database.loadAll(Comment.class, (ObjectTemplate objectTemplate) -> {
+					Comment comment = (Comment) objectTemplate;
+					return comment.getParent().equals(article);
+				});
+				LinkedList <HashMap <String, Object>> comments = new LinkedList <HashMap <String, Object>> ();
+				
+				if(commentObjects != null) {
+					for(int i = 0; i < commentObjects.size(); i++) {
+						if(commentObjects.size() - 1 - i >= page * range && commentObjects.size() - 1 - i < (page + 1) * range) {
+							Comment comment = (Comment) commentObjects.get(i);
+							comments.addFirst(comment.getValues());
+							comments.get(0).put("deletable", (comment.getAuthor().equals(user) || admin));
+						}
+					}
+				}
+				
+				Integer previous = (page > 0) ? (page - 1) : null;
+				Integer next = (commentObjects.size() > (page + 1) * range) ? (page + 1) : null;
+				
+				variables.put("previous", previous);
+				variables.put("next", next);
+				
+				variables.put("comments", comments);
+				
 				return responder.render("articles/article.html", request.languages, variables);
 			} else {
 				return responder.redirect("/articles");
@@ -166,6 +198,124 @@ public class Application {
 			
 		});
 		
+		
+		server.on("POST", "/articles/article/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
+				Article article = null;
+				if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+					if(article.isVisible() || user.isAdmin()) {
+						Comment comment = new Comment();
+						comment.parseFromParameters(request.parameters);
+						comment.setAuthor(user);
+						comment.setParent(article);
+						Messages messages = new Messages();
+						
+						if(comment.validate(messages)) {
+							if(database.save(comment)) {
+								return responder.redirect("/articles/article/" + request.groups.get(0));
+							}
+						}
+
+						request.session.addFlash("errors", messages);
+						
+						return responder.redirect("/articles/article/" + request.groups.get(0));
+					}
+				}
+				return responder.redirect("/articles");
+			}
+			return responder.redirect("/signin");
+			
+		});
+		
+		server.on("GET", "/articles/delete/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
+				if(user.isAdmin()) {
+					if(database.deleteId(Article.class, request.groups.get(0))) {
+						return responder.redirect("/articles");
+					}
+					return responder.redirect("/articles/article/" + request.groups.get(0));
+				}
+			}
+			
+			return responder.redirect("/signin");
+			
+		});
+		
+		server.on("GET", "/articles/visible/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
+				if(user.isAdmin()) {
+					Article article = null;
+					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+						article.setVisible(!article.isVisible());
+						database.update(article);
+					}
+				}
+			}
+			
+			return responder.redirect("/articles/article/" + request.groups.get(0));
+		});
+		
+		server.on("GET", "/articles/edit/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {				
+				if(user.isAdmin()) {
+					Article article = null;
+					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+						HashMap <String, Object> variables = new HashMap <String, Object> ();
+						variables.put("article", article.getValues());
+						addMessagesFlashToVariables(request, "errors", variables);
+						return responder.render("articles/edit.html", request.languages, variables);
+					}
+					return responder.redirect("/articles");
+				}
+			}
+			
+			return responder.redirect("/signin");
+		});
+		
+		server.on("POST", "/articles/edit/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				if(user.isAdmin()) {
+					Article article = null;
+					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+						article.parseFromParameters(request.parameters);
+						
+						Messages messages = new Messages();
+						if(article.validate(messages)) {
+							if(database.update(article)) {
+								return responder.redirect("/articles/article/" + request.groups.get(0));
+							}
+						}
+						
+						request.session.addFlash("errors", messages);
+						return responder.redirect("/articles/edit/" + request.groups.get(0));
+					}
+					return responder.redirect("/articles");
+				}
+			}
+			return responder.redirect("/signin");
+		});
+	
+		server.on("GET", "/comments/delete/(.*)", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				Comment comment = null;
+				if((comment = (Comment) database.loadId(Comment.class, request.groups.get(0))) != null) {
+					Article article = comment.getParent();
+					if(user.isAdmin() || comment.getAuthor().equals(user)) {
+						database.deleteId(Comment.class, request.groups.get(0));
+					}
+					return responder.redirect("/articles/article/" + article.getId(database));
+				}
+			}
+			
+			return responder.redirect("/signin");
+			
+		});
 	}
 	
 	private void serverRoutes() {
@@ -220,12 +370,7 @@ public class Application {
 		
 		server.on("GET", "/signin", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("signin.html", request.languages, variables);
 		});
 		
@@ -250,12 +395,7 @@ public class Application {
 		
 		server.on("GET", "/signup", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("signup.html", request.languages, variables);
 		});
 		
@@ -305,12 +445,7 @@ public class Application {
 		
 		server.on("GET", "/recover", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("recover/index.html", request.languages, variables);
 		});
 		
@@ -373,10 +508,7 @@ public class Application {
 		
 		server.on("GET", "/profile/email", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("profile/email.html", request.languages, variables);
 		});
 		
@@ -402,11 +534,7 @@ public class Application {
 		
 		server.on("GET", "/profile/password", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("profile/password.html", request.languages, variables);
 		});
 		
@@ -430,11 +558,7 @@ public class Application {
 		
 		server.on("GET", "/profile/delete", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			Messages messages = (Messages) request.session.getFlash("errors");
-			if(messages != null) {
-				messages.addToVariables(variables, "errors");
-			}
-			
+			addMessagesFlashToVariables(request, "errors", variables);
 			return responder.render("profile/delete.html", request.languages, variables);
 		});
 		
@@ -467,6 +591,13 @@ public class Application {
 		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
 		variables.put("key", user.getKey());
 		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", request.languages, variables);
+	}
+	
+	private void addMessagesFlashToVariables(Request request, String name, HashMap <String, Object> variables) {
+		Messages messages = (Messages) request.session.getFlash(name);
+		if(messages != null) {
+			messages.addToVariables(variables, name);
+		}
 	}
 	
 }

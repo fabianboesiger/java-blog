@@ -14,14 +14,14 @@
 		print get "id" get "article" variables
 		print "\">"
 		print "<h3>"
-		print get "headline" get "article" variables
+		print htmlencode get "headline" get "article" variables
 		print "</h3>"
 		print "<p>"
-		print get "lead" get "article" variables
+		print htmlencode get "lead" get "article" variables
 		print "</p>"
 		print "<em>"
         if not equals get "author" get "article" variables null
-		    print get "author" get "article" variables
+		    print htmlencode get "author" get "article" variables
             print ", "
         end
 		print get "date" get "article" variables

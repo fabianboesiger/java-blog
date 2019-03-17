@@ -90,7 +90,8 @@ main{
 }
 
 header, footer{
-	color: var(--outside-text-color);
+    color: var(--outside-text-color);
+    background-color: var(--outside-color);
 }
 
 header{
@@ -108,7 +109,7 @@ main, header, footer{
 	padding-right: var(--padding);
 }
 
-.centered > *:not(script), .content > *, form > *, .article > *{
+.centered > *:not(script), .content > *, form > *, .article > *, .markdown > *{
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -118,9 +119,13 @@ main, header, footer{
 
 /* General Element Styling */
 
-h1, h2, h3{
+h1, h2, h3, h4, h5, h6{
 	font-family: var(--heading-font);
 	font-weight: normal;
+}
+
+.inline{
+	display: inline !important;
 }
 
 h1{
@@ -133,6 +138,18 @@ h2{
 
 h3{
 	font-size: 24px;
+}
+
+h4, h5, h6{
+	font-size: var(--text-size);
+}
+
+.markdown h1{
+    font-size: 24px;
+}
+
+.markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6{
+	font-size: var(--text-size);
 }
 
 ul{
@@ -206,19 +223,26 @@ pre{
     font-family: var(--code-font);
 }
 
-#article-navigator{
+.navigator{
     text-align: center;
 }
 
-#article-navigator a{
+.navigator a{
     display: inline-block;
     color: var(--main-text-color);
     text-decoration: none;
     font-size: 32px;
 }
 
-#article-navigator a:hover, #article-navigator a:focus{
+.navigator a:hover, .navigator a:focus{
     color: var(--outside-text-color);
+}
+
+#travolta{
+    position: absolute;
+    bottom: -48px;
+    right: 0px;
+    height: 150px;
 }
 
 /* Tables */
@@ -243,7 +267,7 @@ th, td{
 
 /* Form and Button Styling */
 
-form{
+form:not(.full-width){
 	margin: auto;
 	max-width: var(--max-form-width);
 }
@@ -330,8 +354,8 @@ nav{
 	display: flex;
 	justify-content: center;
 	align-self: flex-start;
-	flex-flow: row wrap;
-	z-index: 1000;
+    flex-flow: row wrap;
+    z-index: 100;
 }
 
 nav > a{

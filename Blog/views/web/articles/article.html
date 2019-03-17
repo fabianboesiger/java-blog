@@ -1,27 +1,89 @@
 {{include "top.html"}}
 {{
     print "<h2>"
-    print get "headline" get "article" variables
+    print htmlencode get "headline" get "article" variables
     print "</h2>"
     print "<em>"
-    print get "author" get "article" variables
+    print htmlencode get "author" get "article" variables
     print ", "
     print get "date" get "article" variables
     print "</em>"
     print "<p>"
-    print get "lead" get "article" variables
+    print htmlencode get "lead" get "article" variables
     print "</p>"
+    print "<div class=\"markdown\">"
+    print markdown htmlencode get "content" get "article" variables
+    print "</div>"
     
     if not equals get "admin" variables null
         if get "admin" variables
-            print "<a class=\"button\" href=\"/articles/delete\">"
-            print translate "delete-article"
+            print "<a class=\"button\" href=\"/articles/visible/"
+            print get "id" get "article" variables
+            print "\">"
+            if get "visible" get "article" variables
+                print translate "hide-article"
+            end
+            if not get "visible" get "article" variables
+                print translate "publish-article"
+            end
             print "</a>"
-            print "<a class=\"button\" href=\"/articles/visible\">"
-            print translate "hide-article"
+            print "<a class=\"button\" href=\"/articles/edit/"
+            print get "id" get "article" variables
+            print "\">"
+            print translate "edit-article"
+            print "</a>"
+            print "<a class=\"button\" href=\"/articles/delete/"
+            print get "id" get "article" variables
+            print "\">"
+            print translate "delete-article"
             print "</a>"
         end
     end
 }}
 <a class="button" href="/articles">{{print translate "back"}}</a>
+{{
+    if not equals get "username" variables null
+        include "article-comment-form.html"
+    end
+
+    if not equals size get "comments" variables 0
+        print "<h2>"
+        print translate "comments"
+        print "</h2>"
+
+        each "comment" get "comments" variables
+            print "<div class=\"comment\">"
+            print "<span>"
+            print "<h3 class=\"inline\">"
+            if not equals get "author" get "comment" variables null
+                print htmlencode get "author" get "comment" variables
+            end
+            if equals get "author" get "comment" variables null
+                print "<em>"
+                print translate "unknown-author"
+                print "</em>"
+            end
+            print "</h3>"
+            print "<br/>"
+            print "<em>"
+            print get "date" get "comment" variables
+            print "</em>"
+            if get "deletable" get "comment" variables
+                print "<br/>"
+                print "<a href=\"/comments/delete/"
+                print get "id" get "comment" variables
+                print "\">"
+                print translate "delete-comment"
+                print "</a>"
+            end
+            print "</span>"
+            print "<div class=\"markdown\">"
+                print markdown htmlencode get "content" get "comment" variables
+            print "</div>"
+            print "</div>"
+        end
+
+        include "comment-navigator.html"
+    end
+}}
 {{include "bottom.html"}}
