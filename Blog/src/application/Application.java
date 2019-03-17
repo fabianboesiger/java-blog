@@ -15,7 +15,7 @@ import server.Server;
 
 public class Application {
 	
-	private static final boolean PRODUCTION = false;
+	private static final boolean PRODUCTION = true;
 	
 	private Database database;
 	private Responder responder;
@@ -93,6 +93,7 @@ public class Application {
 					return article.isVisible();
 				});
 			}
+			
 			LinkedList <HashMap <String, Object>> articles = new LinkedList <HashMap <String, Object>> ();
 			
 			if(articleObjects != null) {
@@ -102,13 +103,13 @@ public class Application {
 					}
 				}
 			}
-
+			
 			Integer previous = (page > 0) ? (page - 1) : null;
-			Integer next = (articleObjects.size() > (page + 1) * range) ? (page + 1) : null;
+			Integer next = (articleObjects != null && articleObjects.size() > (page + 1) * range) ? (page + 1) : null;
 			
 			variables.put("previous", previous);
 			variables.put("next", next);
-			
+						
 			variables.put("articles", articles);
 			
 			return responder.render("articles/index.html", request.languages, variables);
@@ -184,7 +185,7 @@ public class Application {
 				}
 				
 				Integer previous = (page > 0) ? (page - 1) : null;
-				Integer next = (commentObjects.size() > (page + 1) * range) ? (page + 1) : null;
+				Integer next = (commentObjects != null && commentObjects.size() > (page + 1) * range) ? (page + 1) : null;
 				
 				variables.put("previous", previous);
 				variables.put("next", next);
