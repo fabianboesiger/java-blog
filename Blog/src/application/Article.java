@@ -18,8 +18,8 @@ public class Article extends ObjectTemplate {
 	
 	public Article() {
 		headline = new StringTemplate("headline", 0, 128);
-		lead = new StringTemplate("lead", 0, 128);
-		content = new StringTemplate("content", 0, 128);
+		lead = new StringTemplate("lead", 0, 1024);
+		content = new StringTemplate("content", 0, 8192);
 		author = new ObjectTemplateReference <User> ("author", User::new);
 		visible = new BooleanTemplate("visible");
 		visible.set(false);
