@@ -11,7 +11,7 @@
 		</div>
 		<div>
 			<label for="content">{{print translate "content"}}</label>
-			<textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="16">{{print htmlencode get "headline" get "article" variables}}</textarea>
+			<textarea class="code" type="text" name="content" id="content"  minlength="0" maxlength="8192" rows="16">{{print htmlencode get "content" get "article" variables}}</textarea>
 		</div>
 		<input type="submit" value="{{print translate "submit"}}" id="submit"/>
 		<a class="button" href="/articles">{{print translate "back"}}</a>
