@@ -160,13 +160,13 @@ public class Application {
 				}
 				variables.put("article", article.getValues());
 				addMessagesFlashToVariables(request, "errors", variables);
-				
+
 				int page = 0;
 				int range = 8;
 				if(request.parameters.containsKey("page")) {
 					page = Integer.parseInt(request.parameters.get("page"));
 				}
-								
+
 				LinkedList <ObjectTemplate> commentObjects = null;
 				commentObjects = database.loadAll(Comment.class, (ObjectTemplate objectTemplate) -> {
 					Comment comment = (Comment) objectTemplate;
@@ -183,7 +183,7 @@ public class Application {
 						}
 					}
 				}
-				
+
 				Integer previous = (page > 0) ? (page - 1) : null;
 				Integer next = (commentObjects != null && commentObjects.size() > (page + 1) * range) ? (page + 1) : null;
 				
@@ -249,7 +249,11 @@ public class Application {
 				if(user.isAdmin()) {
 					Article article = null;
 					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
-						article.setVisible(!article.isVisible());
+						boolean visible = article.isVisible();
+						article.setVisible(!visible);
+						if(!visible) {
+							sendPublishedMail(article, request);
+						}
 						database.update(article);
 					}
 				}
@@ -283,7 +287,7 @@ public class Application {
 					Article article = null;
 					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
 						article.parseFromParameters(request.parameters);
-						
+						article.setAuthor(user);
 						Messages messages = new Messages();
 						if(article.validate(messages)) {
 							if(database.update(article)) {
@@ -309,7 +313,7 @@ public class Application {
 					if(user.isAdmin() || comment.getAuthor().equals(user)) {
 						database.deleteId(Comment.class, request.groups.get(0));
 					}
-					return responder.redirect("/articles/article/" + article.getId(database));
+					return responder.redirect("/articles/article/" + article.getId());
 				}
 			}
 			
@@ -563,16 +567,23 @@ public class Application {
 		});
 		
 		server.on("GET", "/profile/delete/confirm", (Request request) -> {
-			if(database.delete(User.class, request.session.getUsername())) {
-				request.session.logout();
-				return responder.redirect("/");
-			} else {
-				Messages messages = new Messages();
-				messages.add("user", "deletion-error");
-				request.session.addFlash("errors", messages);
-				return responder.redirect("/profile/delete");
+			final User user;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				database.deleteAll(Article.class, (ObjectTemplate article) -> {
+					return ((Article) article).getAuthor().equals(user);
+				});
+				database.deleteAll(Comment.class, (ObjectTemplate article) -> {
+					return ((Comment) article).getAuthor().equals(user);
+				});
+				if(database.delete(User.class, request.session.getUsername())) {
+					request.session.logout();
+					return responder.redirect("/");
+				}
 			}
-			
+			Messages messages = new Messages();
+			messages.add("user", "deletion-error");
+			request.session.addFlash("errors", messages);
+			return responder.redirect("/profile/delete");
 		});
 		
 	}
@@ -591,6 +602,21 @@ public class Application {
 		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
 		variables.put("key", user.getKey());
 		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", request.languages, variables);
+	}
+	
+	private void sendPublishedMail(Article article, Request request) {
+		HashMap <String, Object> variables = new HashMap <String, Object> ();
+		variables.put("author", article.getAuthor().getUsername());
+		variables.put("headline", article.getHeadline());
+		variables.put("lead", article.getLead());
+		variables.put("id", article.getId());
+		LinkedList <ObjectTemplate> users = database.loadAll(User.class, (ObjectTemplate objectTemplate) -> {
+			return ((User) objectTemplate).isActivated();
+		});
+		for(ObjectTemplate user : users) {
+			variables.put("username", ((User) user).getUsername());
+			mailer.send(((User) user).getMail(), "{{print translate \"article-published\"}}", "published.html", request.languages, variables);
+		}
 	}
 	
 	private void addMessagesFlashToVariables(Request request, String name, HashMap <String, Object> variables) {

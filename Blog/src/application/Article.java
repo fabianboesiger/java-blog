@@ -29,6 +29,18 @@ public class Article extends ObjectTemplate {
 		author.set(user);
 	}
 	
+	public User getAuthor() {
+		return (User) author.get();
+	}
+	
+	public String getLead() {
+		return (String) lead.get();
+	}
+	
+	public String getHeadline() {
+		return (String) headline.get();
+	}
+	
 	public HashMap <String, Object> getValues(){
 		HashMap <String, Object> map = new HashMap <String, Object> ();
 		map.put("headline",	headline.get());
