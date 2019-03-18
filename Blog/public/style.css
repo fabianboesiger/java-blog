@@ -109,7 +109,7 @@ main, header, footer{
 	padding-right: var(--padding);
 }
 
-.centered > *:not(script), .content > *, form > *, .article > *, .markdown > *{
+.centered > *:not(script), .content > *, form > *, .article-preview > *, .article > *, .comment > *, .markdown > *{
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -144,11 +144,15 @@ h4, h5, h6{
 	font-size: var(--text-size);
 }
 
-.markdown h1{
+.article .markdown h1{
     font-size: 24px;
 }
 
-.markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6{
+.article .markdown h2, .article .markdown h3, .article .markdown h4, .article .markdown h5, .article .markdown h6{
+	font-size: var(--text-size);
+}
+
+.comment .markdown h1, .comment .markdown h2, .comment .markdown h3, .comment .markdown h4, .comment .markdown h5, .comment .markdown h6{
 	font-size: var(--text-size);
 }
 
@@ -201,19 +205,19 @@ pre{
 	font-family: var(--code-font);
 }
 
-.article{
+.article-preview{
 	border-top: 1px solid var(--main-text-color);
 	border-bottom: 1px solid var(--main-text-color);
 	text-decoration: none;
 }
 
-.article:hover, .article:focus{
+.article-preview:hover, .article-preview:focus{
 	color: var(--outside-text-color);
 	border-top: 1px solid var(--outside-text-color);
 	border-bottom: 1px solid var(--outside-text-color);
 }
 
-.article > *{
+.article-preview > *{
 	margin: 0px;
 	margin-top: 8px;
 	margin-bottom: 8px;
@@ -243,6 +247,16 @@ pre{
     bottom: -48px;
     right: 0px;
     height: 150px;
+}
+
+.unknown-author::before{
+    font-style: normal;
+    content: "[";
+}
+
+.unknown-author::after{
+    font-style: normal;
+    content: "]";
 }
 
 /* Tables */

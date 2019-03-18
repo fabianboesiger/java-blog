@@ -70,3 +70,8 @@ Kommentar verfassen
 Kommentare
 Unbekannter Autor
 Kommentar löschen
+Veröffentlicht
+Versteckt
+Neuer Artikel veröffentlicht
+{{print get "author" variables}} hat einen neuen Artikel veröffentlicht!
+Lese den ganzen Artikel <a href="{{print get "url" variables}}/articles/article/{{print get "id" variables}}">hier</a>.

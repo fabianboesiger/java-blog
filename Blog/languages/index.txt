@@ -70,3 +70,8 @@ write-comment
 comments
 unknown-author
 delete-comment
+published
+hidden
+article-published
+article-published-email-introduction
+article-published-email-link

@@ -10,7 +10,7 @@
     end
 
 	each "article" get "articles" variables
-		print "<a class=\"article\" href=\"/articles/article/"
+		print "<a class=\"article-preview\" href=\"/articles/article/"
 		print get "id" get "article" variables
 		print "\">"
 		print "<h3>"
@@ -21,11 +21,24 @@
 		print "</p>"
 		print "<em>"
         if not equals get "author" get "article" variables null
-		    print htmlencode get "author" get "article" variables
-            print ", "
+            print htmlencode get "author" get "article" variables
         end
+        if equals get "author" get "article" variables null
+            print "<span class=\"unknown-author\">"
+            print translate "unknown-author"
+            print "</span>"
+        end
+        print ", "
 		print get "date" get "article" variables
-		print "</em>"
+        print "</em>"
+        print "<em>"
+            if get "visible" get "article" variables
+                print translate "published"
+            end
+            if not get "visible" get "article" variables
+                print translate "hidden"
+            end
+        print "</em>"
 		print "</a>"
     end
 
