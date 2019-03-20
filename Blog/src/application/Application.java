@@ -505,6 +505,7 @@ public class Application {
 				HashMap <String, Object> variables = new HashMap <String, Object> ();
 				variables.put("activated", user.isActivated());
 				variables.put("admin", user.isAdmin());
+				variables.put("notifications", user.notificationsEnabled());
 				return responder.render("profile/index.html", request.languages, variables);
 			}
 			return responder.redirect("/signin");
@@ -560,6 +561,20 @@ public class Application {
 			return responder.redirect("/profile/password");
 		});
 		
+		server.on("GET", "/profile/notifications", (Request request) -> {
+			User user = null;
+			if((user = (User) database.load(User.class, request.session.getUsername())) != null) {
+				user.toggleNotifications();
+				if(user.validate()) {
+					database.update(user);
+				}
+			} else {
+				return responder.redirect("/signin");
+			}
+			
+			return responder.redirect("/profile");
+		});
+		
 		server.on("GET", "/profile/delete", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
@@ -611,7 +626,7 @@ public class Application {
 		variables.put("lead", article.getLead());
 		variables.put("id", article.getId());
 		LinkedList <ObjectTemplate> users = database.loadAll(User.class, (ObjectTemplate objectTemplate) -> {
-			return ((User) objectTemplate).isActivated();
+			return ((User) objectTemplate).isActivated() && ((User) objectTemplate).notificationsEnabled();
 		});
 		for(ObjectTemplate user : users) {
 			variables.put("username", ((User) user).getUsername());

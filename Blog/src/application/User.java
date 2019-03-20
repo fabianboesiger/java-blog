@@ -17,6 +17,7 @@ public class User extends ObjectTemplate {
 	private BooleanTemplate activated;
 	private StringTemplate key;
 	private BooleanTemplate admin;
+	private BooleanTemplate notifications;
 	
 	public User() {
 		username = new IdentifiableStringTemplate("username", 2, 16);
@@ -30,6 +31,8 @@ public class User extends ObjectTemplate {
 		key.set(Server.generateKey(64));
 		admin = new BooleanTemplate("admin");
 		admin.set(false);
+		notifications = new BooleanTemplate("notifications");
+		notifications.set(true);
 		setIdentifier(username);
 	}
 	
@@ -92,5 +95,15 @@ public class User extends ObjectTemplate {
 	public boolean isAdmin() {
 		return (Boolean) admin.get();
 	}
+
+	public void toggleNotifications() {
+		notifications.set(!((Boolean) notifications.get()));
+	}
+
+	public boolean notificationsEnabled() {
+		return (Boolean) notifications.get();
+	}
+	
+	
 
 }
