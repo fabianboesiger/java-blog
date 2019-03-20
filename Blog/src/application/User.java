@@ -38,7 +38,7 @@ public class User extends ObjectTemplate {
 	
 	public boolean authenticate(String password) {
 		if(password != null) {
-			try {
+			try { 
 				if(hash(password).equals(this.password.get())) {
 					return true;
 				}
