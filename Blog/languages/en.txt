@@ -75,3 +75,5 @@ Hidden
 New Article Published
 {{print get "author" variables}} has published a new article!
 Read the full article <a href="{{print get "url" variables}}/articles/article/{{print get "id" variables}}">here</a>.
+Enable Notifications
+Disable Notifications

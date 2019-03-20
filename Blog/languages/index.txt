@@ -75,3 +75,5 @@ hidden
 article-published
 article-published-email-introduction
 article-published-email-link
+enable-notifications
+disable-notifications
