@@ -60,7 +60,7 @@ public class Application {
 		});
 		
 		server.on("GET", "/", (Request request) -> {
-			return responder.render("index.html", request.languages);
+			return responder.render("index.html", request.session.getLanguages());
 		});
 		
 	}
@@ -112,13 +112,13 @@ public class Application {
 						
 			variables.put("articles", articles);
 			
-			return responder.render("articles/index.html", request.languages, variables);
+			return responder.render("articles/index.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("GET", "/articles/create", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("articles/create.html", request.languages, variables);
+			return responder.render("articles/create.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/articles/create", (Request request) -> {
@@ -191,7 +191,7 @@ public class Application {
 				variables.put("next", next);
 				variables.put("comments", comments);
 				
-				return responder.render("articles/article.html", request.languages, variables);
+				return responder.render("articles/article.html", request.session.getLanguages(), variables);
 			} else {
 				return responder.redirect("/articles");
 			}
@@ -271,7 +271,7 @@ public class Application {
 						HashMap <String, Object> variables = new HashMap <String, Object> ();
 						variables.put("article", article.getValues());
 						addMessagesFlashToVariables(request, "errors", variables);
-						return responder.render("articles/edit.html", request.languages, variables);
+						return responder.render("articles/edit.html", request.session.getLanguages(), variables);
 					}
 					return responder.redirect("/articles");
 				}
@@ -325,7 +325,7 @@ public class Application {
 	private void serverRoutes() {
 		
 		server.on("GET", "/server", (Request request) -> {
-			return responder.render("server.html", request.languages);
+			return responder.render("server.html", request.session.getLanguages());
 		});
 		
 		server.on("GET", "/stats", (Request request) -> {
@@ -365,7 +365,7 @@ public class Application {
 			
 			variables.put("bytes-per-day", "" + formatted);
 			
-			return responder.render("stats.html", request.languages, variables);
+			return responder.render("stats.html", request.session.getLanguages(), variables);
 		});
 		
 	}
@@ -375,7 +375,7 @@ public class Application {
 		server.on("GET", "/signin", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("signin.html", request.languages, variables);
+			return responder.render("signin.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/signin", (Request request) -> {
@@ -400,7 +400,7 @@ public class Application {
 		server.on("GET", "/signup", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("signup.html", request.languages, variables);
+			return responder.render("signup.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/signup", (Request request) -> {
@@ -444,13 +444,13 @@ public class Application {
 					return responder.redirect("/profile");
 				}
 			}
-			return responder.render("recover/activate.html", request.languages);
+			return responder.render("recover/activate.html", request.session.getLanguages());
 		});
 		
 		server.on("GET", "/recover", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("recover/index.html", request.languages, variables);
+			return responder.render("recover/index.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/recover", (Request request) -> {
@@ -473,7 +473,7 @@ public class Application {
 		});
 		
 		server.on("GET", "/recover/confirm", (Request request) -> {
-			return responder.render("recover/confirm.html", request.languages);
+			return responder.render("recover/confirm.html", request.session.getLanguages());
 		});
 		
 		server.on("GET", "/unlock", (Request request) -> {	
@@ -484,7 +484,7 @@ public class Application {
 					return responder.redirect("/profile/password");
 				}
 			}
-			return responder.render("recover/unlock.html", request.languages);
+			return responder.render("recover/unlock.html", request.session.getLanguages());
 		});
 		
 	}
@@ -506,7 +506,7 @@ public class Application {
 				variables.put("activated", user.isActivated());
 				variables.put("admin", user.isAdmin());
 				variables.put("notifications", user.notificationsEnabled());
-				return responder.render("profile/index.html", request.languages, variables);
+				return responder.render("profile/index.html", request.session.getLanguages(), variables);
 			}
 			return responder.redirect("/signin");
 		});
@@ -514,7 +514,7 @@ public class Application {
 		server.on("GET", "/profile/email", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("profile/email.html", request.languages, variables);
+			return responder.render("profile/email.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/profile/email", (Request request) -> {
@@ -540,7 +540,7 @@ public class Application {
 		server.on("GET", "/profile/password", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("profile/password.html", request.languages, variables);
+			return responder.render("profile/password.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("POST", "/profile/password", (Request request) -> {
@@ -578,7 +578,7 @@ public class Application {
 		server.on("GET", "/profile/delete", (Request request) -> {
 			HashMap <String, Object> variables = new HashMap <String, Object> ();
 			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("profile/delete.html", request.languages, variables);
+			return responder.render("profile/delete.html", request.session.getLanguages(), variables);
 		});
 		
 		server.on("GET", "/profile/delete/confirm", (Request request) -> {
@@ -608,7 +608,7 @@ public class Application {
 		variables.put("username", user.getUsername());
 		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
 		variables.put("key", user.getKey());
-		mailer.send(user.getMail(), "{{print translate \"activate-account\"}}", "activate.html", request.languages, variables);
+		mailer.send(user.getMail(), "{{print translate \"activate-account\"}}", "activate.html", request.session.getLanguages(), variables);
 	}
 	
 	private void sendRecoverMail(User user, Request request) {
@@ -616,7 +616,7 @@ public class Application {
 		variables.put("username", user.getUsername());
 		variables.put("encrypted-username", Database.encrypt(user.getUsername()));
 		variables.put("key", user.getKey());
-		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", request.languages, variables);
+		mailer.send(user.getMail(), "{{print translate \"recover-account\"}}", "recover.html", request.session.getLanguages(), variables);
 	}
 	
 	private void sendPublishedMail(Article article, Request request) {
@@ -630,7 +630,7 @@ public class Application {
 		});
 		for(ObjectTemplate user : users) {
 			variables.put("username", ((User) user).getUsername());
-			mailer.send(((User) user).getMail(), "{{print translate \"article-published\"}}", "published.html", request.languages, variables);
+			mailer.send(((User) user).getMail(), "{{print translate \"article-published\"}}", "published.html", request.session.getLanguages(), variables);
 		}
 	}
 	
