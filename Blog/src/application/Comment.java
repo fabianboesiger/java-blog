@@ -8,6 +8,8 @@ import database.templates.ObjectTemplateReference;
 import database.templates.StringTemplate;
 
 public class Comment extends ObjectTemplate {
+	
+	public static final String NAME = "comments";
 		
 	private StringTemplate content;
 	private ObjectTemplateReference <Article> parent;

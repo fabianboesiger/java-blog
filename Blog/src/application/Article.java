@@ -9,6 +9,8 @@ import database.templates.ObjectTemplateReference;
 import database.templates.StringTemplate;
 
 public class Article extends ObjectTemplate {
+	
+	public static final String NAME = "articles";
 		
 	private StringTemplate headline;
 	private StringTemplate lead;
