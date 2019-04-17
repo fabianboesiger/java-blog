@@ -236,10 +236,17 @@ public class Application {
 		
 		server.on("GET", "/articles/delete/(.*)", (Request request) -> {
 			User user = (User) request.session.load();
-			if(user != null) {				
+			if(user != null) {			
 				if(user.isAdmin()) {
-					if(database.deleteId(Article.class, request.groups.get(0))) {
-						return responder.redirect("/articles");
+					final Article article;
+					if((article = (Article) database.loadId(Article.class, request.groups.get(0))) != null) {
+						if(database.deleteId(Article.class, request.groups.get(0))) {
+							database.deleteAll(Comment.class, (ObjectTemplate objectTemplate) -> {
+								Comment comment = (Comment) objectTemplate;
+								return comment.getParent().equals(article);
+							});
+							return responder.redirect("/articles");
+						}
 					}
 					return responder.redirect("/articles/article/" + request.groups.get(0));
 				}
@@ -509,9 +516,14 @@ public class Application {
 		});
 		
 		server.on("GET", "/profile/email", (Request request) -> {
-			HashMap <String, Object> variables = new HashMap <String, Object> ();
-			addMessagesFlashToVariables(request, "errors", variables);
-			return responder.render("profile/email.html", request.languages, variables);
+			User user = (User) request.session.load();
+			if(user != null) {
+				HashMap <String, Object> variables = new HashMap <String, Object> ();
+				addMessagesFlashToVariables(request, "errors", variables);
+				variables.put("email", user.getMail());
+				return responder.render("profile/email.html", request.languages, variables);
+			}
+			return responder.redirect("/signin");
 		});
 		
 		server.on("POST", "/profile/email", (Request request) -> {
