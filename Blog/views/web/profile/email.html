@@ -3,7 +3,7 @@
         <h2>{{print translate "change-email"}}</h2>
 		<div>
 			<label for="email">{{print translate "email"}}</label>
-			<input type="email" name="email" id="email" maxlength="64"/>
+			<input type="email" name="email" id="email" maxlength="64" value="{{print get "email" variables}}"/>
 		</div>
         <input type="submit" value="{{print translate "submit"}}" id="submit-signup"/>
         <a class="button" href="/profile">{{print translate "back"}}</a>
