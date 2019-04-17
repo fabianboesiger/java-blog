@@ -386,8 +386,8 @@ public class Application {
 		
 		server.on("POST", "/signin", (Request request) -> {
 			Validator validator = new Validator("errors");
-			User user = (User) request.session.load();
-			if(user != null) {
+			User user;
+			if((user = (User) database.load(User.class, request.parameters.get("username"))) != null) {
 				if(user.authenticate(request.parameters.get("password"))) {
 					request.session.save(user);
 					return responder.redirect("/");
